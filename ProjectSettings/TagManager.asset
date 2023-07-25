@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Fruit
   - GridCell
+  - Apple
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - NoSelfCollision
   - Water
   - UI
   - 
