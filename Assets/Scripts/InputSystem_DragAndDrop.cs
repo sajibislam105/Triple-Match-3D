@@ -86,7 +86,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
-            if (_oldPosition != _newGridPosition)
+            if (_oldPosition != _newGridPosition && _toDrag != null)
             {
                 for (int i = 0; i < _gridGenerator.GridCellGameObjectsList.Count; i++)   
                 {
@@ -111,7 +111,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
             {
                 if (_toDrag !=null)
                 {
-                    _toDrag.transform.position = _oldPosition;                            
+                    _toDrag.transform.DOScale(1f, 0.2f).SetEase(Ease.Linear);
+                    _toDrag.transform.DOMove(_oldPosition,0.2f).SetEase(Ease.OutBack);                            
                 }                
                 
             }
