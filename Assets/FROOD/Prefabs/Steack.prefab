@@ -11,9 +11,11 @@ GameObject:
   - component: {fileID: 5972483190779336681}
   - component: {fileID: 3438924301421243871}
   - component: {fileID: 8972588852944310566}
+  - component: {fileID: -4937233771311213204}
+  - component: {fileID: 6094116552299428296}
   m_Layer: 0
   m_Name: Steack
-  m_TagString: Untagged
+  m_TagString: Fruit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,3 +86,40 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-4937233771311213204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7258074207491335674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad5ca8c6d54d8d1438a226fa3ddd37d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ScallingDown: {fileID: 0}
+  fruitName: Steak
+  isInGrid: 0
+--- !u!64 &6094116552299428296
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7258074207491335674}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2804591644048978207, guid: 67547ae68ce6a6242a5fda472d37ba85, type: 3}

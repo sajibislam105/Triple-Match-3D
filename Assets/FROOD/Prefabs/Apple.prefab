@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 3413871938691683559}
   - component: {fileID: 8961049571747670046}
   - component: {fileID: 7926239432786982009}
+  - component: {fileID: -1531885574996604478}
   m_Layer: 0
   m_Name: Apple
-  m_TagString: Untagged
+  m_TagString: Fruit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,3 +99,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ScallingDown: {fileID: 0}
+  fruitName: Apple
+  isInGrid: 0
+--- !u!64 &-1531885574996604478
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7233024093203569858}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -472147775963580301, guid: 8565aa5abe7675f41b62cb1bf02db304, type: 3}

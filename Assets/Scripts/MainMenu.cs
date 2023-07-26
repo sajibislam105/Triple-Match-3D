@@ -8,8 +8,7 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private Button PlayButton;
     [SerializeField] private Button QuitButton;
-   
-    
+
     public void PlayGame()
     {
         SceneManager.LoadScene(1);

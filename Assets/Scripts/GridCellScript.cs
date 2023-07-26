@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GridCellScript : MonoBehaviour
@@ -6,12 +7,10 @@ public class GridCellScript : MonoBehaviour
     public GameObject occupiedObject;
     private Transform hitObject;
     
-    // Start is called before the first frame update
     void Start()
     {
         occupiedObject = null;
     }
-    
     private void OnTriggerEnter(Collider other)
     {
         if (other == null)
@@ -25,5 +24,11 @@ public class GridCellScript : MonoBehaviour
             _isOccupied = true;
         }
         //Debug.Log(gameObject.name + " Occupied by -> " + occupiedObject); 
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        _isOccupied = false;
+        occupiedObject = null;
     }
 }

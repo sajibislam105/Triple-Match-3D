@@ -4,7 +4,10 @@ using UnityEngine;
 public class FruitScript : MonoBehaviour
 {
     [SerializeField] private InputSystem_DragAndDrop _ScallingDown;
-
+    [SerializeField] public string fruitName;
+    
+    public bool isInGrid;
+    
     private void OnEnable()
     {
         _ScallingDown.ScaleDownObjectAction += OnScaleDowned;
@@ -19,7 +22,13 @@ public class FruitScript : MonoBehaviour
     {
         if (clickedObject == transform)
         {
-            transform.DOScale(0.25f, 0.1f).SetEase(Ease.Linear);
+            transform.DOScale(0.30f, 0.1f).SetEase(Ease.Linear);
         }
+    }
+
+    public bool PlacedInGrid()
+    {
+         isInGrid = true;
+         return true;
     }
 }
