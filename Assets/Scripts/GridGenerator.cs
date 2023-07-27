@@ -1,34 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
 {
     private AudioSource audioSource;
     
-    [SerializeField] private GameObject gridCellPrefab;
+    [SerializeField] private GridCellScript gridCellPrefab;
     [SerializeField] private int width;
     private float _cellSize = 1f;
     private float _spaceBetweenCell = 0.1f;
     
-    public List<GameObject> GridCellGameObjectsList;
+    public List<GridCellScript> GridCellObjectsList;
     
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        GridCellGameObjectsList = new List<GameObject>(7);
+        GridCellObjectsList = new List<GridCellScript>(7);
         GenerateGrid();
     }
-
     private void Update()
     {
         CheckingOccupancyOfCell();
-        //HasThreeSimilarObject();
         HasThreeSameObject();
     }
-
     private void GenerateGrid()
     {
         var name = 0;
@@ -38,31 +34,26 @@ public class GridGenerator : MonoBehaviour
         for (int x = 0; x < width; x++)
         {
             Vector3 worldPosition = new Vector3( (startX + x ) *( _cellSize + _spaceBetweenCell), 0,  0);
-            GameObject obj = Instantiate(gridCellPrefab, worldPosition, Quaternion.identity);
+            GridCellScript obj = Instantiate(gridCellPrefab, worldPosition, Quaternion.identity);
             if (obj != null)
             {
-                //_gridCellScript = obj.GetComponent<GridCellScript>();
-                GridCellGameObjectsList.Add(obj);
+                GridCellObjectsList.Add(obj);
             }
-            obj.transform.parent = gameObject.transform;
-            obj.name = "Grid Cell " + name;
+            obj.gameObject.transform.parent = gameObject.transform;
+            obj.gameObject.name = "Grid Cell " + name;
             name++;
         }
         gameObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
         transform.Translate(transform.position.x,transform.position.y,0);
-        transform.DOScale(0.75f, 0.01f).SetEase(Ease.Linear);
+        transform.DOScale(0.70f, 0.01f).SetEase(Ease.Linear);
     }
 
     public List<bool> CheckingOccupancyOfCell()
     {
         List<bool> occupancyStatusList = new List<bool>(10);
-        foreach (GameObject gridCellGameObject in GridCellGameObjectsList)
+        foreach (GridCellScript gridCellGameObject in GridCellObjectsList)
         {
-            GridCellScript gridCellScript = gridCellGameObject.GetComponent<GridCellScript>();
-            if(gridCellScript != null)
-            {
-                occupancyStatusList.Add(gridCellScript._isOccupied);
-            }
+           occupancyStatusList.Add(gridCellGameObject._isOccupied);
         }
         return occupancyStatusList;
     }
@@ -71,21 +62,21 @@ public class GridGenerator : MonoBehaviour
     {
         int _containedObject = 0;
         Dictionary<string, FruitData> fruitDictionary = new Dictionary<string, FruitData>();
-        foreach (var gridCellGameObject in GridCellGameObjectsList)
+        foreach (GridCellScript gridCellGameObject in GridCellObjectsList) //DataType GridCell. that's why getting occupied object directly without Using GetComponent<>();
         {
-            if (gridCellGameObject.GetComponent<GridCellScript>().occupiedObject != null && _containedObject <= 7)
+            if (gridCellGameObject.occupiedObject != null && _containedObject <= 7)
             {
-                var fruitName = gridCellGameObject.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName;
+                string fruitName = gridCellGameObject.occupiedObject.fruitName;
                 if (fruitDictionary.ContainsKey(fruitName))
                 {
                     _containedObject += 1;
                     FruitData fruitData = fruitDictionary[fruitName];
                     fruitData.Count++;
-                    fruitData.GameObjects.Add(gridCellGameObject.GetComponent<GridCellScript>().occupiedObject);
+                    fruitData.FruitScriptObjects.Add(gridCellGameObject.occupiedObject);
                     if (fruitData.Count == 3)
                     {
-                        StartCoroutine(MergeObject(fruitData.GameObjects));
-                        Debug.Log("Three " + fruitName + " objects");
+                        StartCoroutine(MergeObject(fruitData.FruitScriptObjects));
+                        //Debug.Log("Three " + fruitName + " objects");
                         return true;
                     }
                 }
@@ -94,7 +85,7 @@ public class GridGenerator : MonoBehaviour
                     _containedObject += 1;
                     FruitData fruitData = new FruitData();
                     fruitData.Count = 1;
-                    fruitData.GameObjects.Add(gridCellGameObject.GetComponent<GridCellScript>().occupiedObject);
+                    fruitData.FruitScriptObjects.Add(gridCellGameObject.occupiedObject);
                     fruitDictionary.Add(fruitName,fruitData);
                 }
             }
@@ -102,111 +93,36 @@ public class GridGenerator : MonoBehaviour
 
         foreach (var fruitData in fruitDictionary.Values)
         {
-            StopCoroutine(MergeObject(fruitData.GameObjects));
-            Debug.Log("code reached here down");
+            StopCoroutine(MergeObject(fruitData.FruitScriptObjects));
+            //Debug.Log("code reached here down");
         }
         return false;
     }
-    
-    bool HasThreeSimilarObject()
-    {
-        int appleCounts = 0;
-        int watermelonCounts = 0;
-        int drinkCounts = 0;
-        
-        int containedObj = 0;
-        
-        List<GameObject> _appleList = new List<GameObject>();
-        List<GameObject> _DrinkList = new List<GameObject>();
-        List<GameObject> _WatermelonList = new List<GameObject>();
-
-        foreach (var obj in GridCellGameObjectsList)
-        {
-            if (obj.GetComponent<GridCellScript>().occupiedObject != null && containedObj <= 7)
-            {
-                if (obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName == "Apple")
-                {
-                    containedObj += 1;
-                    appleCounts += 1;
-                    _appleList.Add(obj.GetComponent<GridCellScript>().occupiedObject);
-                    //Debug.Log(obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName +" added " + appleCounts);
-                }
-                else if (obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName == "Drink")
-                {
-                    containedObj += 1;
-                    drinkCounts += 1;
-                    _DrinkList.Add(obj.GetComponent<GridCellScript>().occupiedObject);
-                    //Debug.Log(obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName +" added " + drinkCounts);
-                }
-                else if (obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName == "Watermelon")
-                {
-                    containedObj += 1;
-                    watermelonCounts += 1;
-                    _WatermelonList.Add(obj.GetComponent<GridCellScript>().occupiedObject);
-                   // Debug.Log(obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName +" added "+ watermelonCounts);
-                }
-                if (appleCounts == 3  || drinkCounts == 3 || watermelonCounts == 3 )
-                {
-                    if (appleCounts == 3)
-                    {
-                        StartCoroutine(MergeObject(_appleList));
-                       // Debug.Log("Three apple objects");
-                    }
-                    else
-                    {
-                        StopCoroutine(MergeObject(_appleList));
-                    }
-                    if (drinkCounts == 3)
-                    {
-                        StartCoroutine(MergeObject(_DrinkList));
-                        //Debug.Log("Three Drink objects");
-                    }
-                    else
-                    {
-                        StopCoroutine(MergeObject(_DrinkList));
-                    }
-                    if (watermelonCounts == 3)
-                    {
-                        StartCoroutine(MergeObject((_WatermelonList)));
-                        //Debug.Log("Three Watermelon objects");
-                    }
-                    else
-                    {
-                        StopCoroutine(MergeObject((_WatermelonList)));
-                    }
-                    
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private IEnumerator MergeObject(List<GameObject> itemList)
+    private IEnumerator MergeObject(List<FruitScript> itemList)
     {
         audioSource.Play();
         foreach (var fruitItem in itemList)
         {
-            fruitItem.GetComponent<FruitScript>().transform.DOMove(Vector3.zero, 0.5f).SetEase(Ease.Linear);
-            fruitItem.GetComponent<FruitScript>().transform.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+            fruitItem.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
+            fruitItem.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
             {
-                Destroy(fruitItem);
+                Destroy(fruitItem.gameObject,0.1f);
             }));
         }
         yield break;
     }
-    
 }
 
+// Class for storing the FruitData
 public class FruitData
 {
     public int Count { get; set; }
-    public List<GameObject> GameObjects { get; set; }
+    public List<FruitScript> FruitScriptObjects { get; set; }
 
-    public FruitData()
+    public FruitData() //constructor 
     {
         Count = 0;
-        GameObjects = new List<GameObject>();
+        FruitScriptObjects = new List<FruitScript>();
     }
 }
 

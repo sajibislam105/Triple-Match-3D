@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ScallingDown: {fileID: 0}
   fruitName: Apple
-  isInGrid: 0
+  _isInGrid: 0
 --- !u!64 &-1531885574996604478
 MeshCollider:
   m_ObjectHideFlags: 0

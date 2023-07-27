@@ -43,6 +43,7 @@ public class LevelManager : MonoBehaviour
             _LevelComplete.SetActive(true);
             LevelText.enabled = false;
             TimerText.enabled = false;
+            backButton.enabled = false;
             _inputSystemDragAndDrop.enabled = false;
         }
 
@@ -69,7 +70,8 @@ public class LevelManager : MonoBehaviour
                 _inputSystemDragAndDrop.enabled = false;
                 _LevelFailed.SetActive(true);
                 LevelText.enabled = false;
-                TimerText.text = "Time Finished";                
+                TimerText.text = "Time Finished";
+                backButton.enabled = false;
             }
              
         }

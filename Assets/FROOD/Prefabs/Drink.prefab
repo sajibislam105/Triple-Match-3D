@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 5710826262040953784}
   m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ScallingDown: {fileID: 0}
   fruitName: Drink
-  isInGrid: 0
+  _isInGrid: 0
 --- !u!64 &-597390825156581010
 MeshCollider:
   m_ObjectHideFlags: 0

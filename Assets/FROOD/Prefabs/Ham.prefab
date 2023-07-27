@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ScallingDown: {fileID: 0}
   fruitName: Ham
-  isInGrid: 0
+  _isInGrid: 0
 --- !u!64 &7812447918192199405
 MeshCollider:
   m_ObjectHideFlags: 0

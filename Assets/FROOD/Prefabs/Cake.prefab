@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ScallingDown: {fileID: 0}
   fruitName: Cake
-  isInGrid: 0
+  _isInGrid: 0
 --- !u!64 &2925450606114255073
 MeshCollider:
   m_ObjectHideFlags: 0
