@@ -22,7 +22,7 @@ public class LevelManager : MonoBehaviour
     private bool _isLevelCompleted;
     private int _levelCount;
 
-    private float _totalTime = 10.0f; //in seconds
+    private float _totalTime = 25.0f; //in seconds
     private float _currentTime;
 
     void Start()
@@ -84,9 +84,17 @@ public class LevelManager : MonoBehaviour
     
     void NextLevel()
     {
+        int lastSceneIndex = SceneManager.sceneCountInBuildSettings - 1;
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex + 1);
         
+        if (currentSceneIndex != lastSceneIndex)
+        {
+            SceneManager.LoadScene(currentSceneIndex + 1);    
+        }
+        else
+        {
+            SceneManager.LoadScene(0); // 0 means landing page
+        }
     }
     
     void RestartLevel()
@@ -98,6 +106,7 @@ public class LevelManager : MonoBehaviour
 
     public void onBackButtonClicked()
     {
+        audioSource.Play();
         LevelText.enabled = false;
         TimerText.enabled = false;
         _isPaused = true;
@@ -106,6 +115,7 @@ public class LevelManager : MonoBehaviour
 
     public void OnPauseMenuPlayButtonClicked()
     {
+        audioSource.Play();
         LevelText.enabled = true;
         TimerText.enabled = true;
         _isPaused = false;
@@ -114,11 +124,13 @@ public class LevelManager : MonoBehaviour
 
     public void OnPauseMenuLandingPageButtonClicked()
     {
+        audioSource.Play();
         SceneManager.LoadScene(0); // 0 means Landing Page
     }
     
     public void OnPauseMenuCloseButtonClicked()
     {
+        audioSource.Play();
         LevelText.enabled = true;
         TimerText.enabled = true;
         _isPaused = false;

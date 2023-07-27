@@ -99,14 +99,15 @@ public class GridGenerator : MonoBehaviour
                 {
                     containedObj += 1;
                     watermelonCounts += 1;
-                   // _WatermelonList.Add(obj.GetComponent<GridCellScript>().occupiedObject);
-                    Debug.Log(obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName +" added "+ watermelonCounts);
+                    _WatermelonList.Add(obj.GetComponent<GridCellScript>().occupiedObject);
+                   // Debug.Log(obj.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName +" added "+ watermelonCounts);
                 }
                 if (appleCounts == 3  || drinkCounts == 3 || watermelonCounts == 3 )
                 {
                     if (appleCounts == 3)
                     {
                         StartCoroutine(MergeObject(_appleList));
+                       // Debug.Log("Three apple objects");
                     }
                     else
                     {
@@ -115,6 +116,7 @@ public class GridGenerator : MonoBehaviour
                     if (drinkCounts == 3)
                     {
                         StartCoroutine(MergeObject(_DrinkList));
+                        //Debug.Log("Three Drink objects");
                     }
                     else
                     {
@@ -123,12 +125,13 @@ public class GridGenerator : MonoBehaviour
                     if (watermelonCounts == 3)
                     {
                         StartCoroutine(MergeObject((_WatermelonList)));
+                        //Debug.Log("Three Watermelon objects");
                     }
                     else
                     {
                         StopCoroutine(MergeObject((_WatermelonList)));
                     }
-                    Debug.Log("Three same objects");
+                    
                     return true;
                 }
             }

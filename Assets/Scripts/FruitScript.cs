@@ -22,7 +22,16 @@ public class FruitScript : MonoBehaviour
     {
         if (clickedObject == transform)
         {
-            transform.DOScale(0.30f, 0.1f).SetEase(Ease.Linear);
+         if (fruitName == "Watermelon")
+         {
+             transform.DOScaleX(0.24f, 0.1f).SetEase(Ease.Linear);
+              transform.DOScaleY(0.30f, 0.1f).SetEase(Ease.Linear);
+              transform.DOScaleZ(1.74f, 0.1f).SetEase(Ease.Linear);
+         }
+         else
+         {
+             transform.DOScale(0.30f, 0.1f).SetEase(Ease.Linear);
+         }
         }
     }
 
