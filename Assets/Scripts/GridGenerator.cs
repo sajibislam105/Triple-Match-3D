@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
@@ -24,7 +25,8 @@ public class GridGenerator : MonoBehaviour
     private void Update()
     {
         CheckingOccupancyOfCell();
-        HasThreeSimilarObject();
+        //HasThreeSimilarObject();
+        HasThreeSameObject();
     }
 
     private void GenerateGrid()
@@ -65,6 +67,47 @@ public class GridGenerator : MonoBehaviour
         return occupancyStatusList;
     }
 
+    bool HasThreeSameObject()
+    {
+        int _containedObject = 0;
+        Dictionary<string, FruitData> fruitDictionary = new Dictionary<string, FruitData>();
+        foreach (var gridCellGameObject in GridCellGameObjectsList)
+        {
+            if (gridCellGameObject.GetComponent<GridCellScript>().occupiedObject != null && _containedObject <= 7)
+            {
+                var fruitName = gridCellGameObject.GetComponent<GridCellScript>().occupiedObject.GetComponent<FruitScript>().fruitName;
+                if (fruitDictionary.ContainsKey(fruitName))
+                {
+                    _containedObject += 1;
+                    FruitData fruitData = fruitDictionary[fruitName];
+                    fruitData.Count++;
+                    fruitData.GameObjects.Add(gridCellGameObject.GetComponent<GridCellScript>().occupiedObject);
+                    if (fruitData.Count == 3)
+                    {
+                        StartCoroutine(MergeObject(fruitData.GameObjects));
+                        Debug.Log("Three " + fruitName + " objects");
+                        return true;
+                    }
+                }
+                else
+                {
+                    _containedObject += 1;
+                    FruitData fruitData = new FruitData();
+                    fruitData.Count = 1;
+                    fruitData.GameObjects.Add(gridCellGameObject.GetComponent<GridCellScript>().occupiedObject);
+                    fruitDictionary.Add(fruitName,fruitData);
+                }
+            }
+        }
+
+        foreach (var fruitData in fruitDictionary.Values)
+        {
+            StopCoroutine(MergeObject(fruitData.GameObjects));
+            Debug.Log("code reached here down");
+        }
+        return false;
+    }
+    
     bool HasThreeSimilarObject()
     {
         int appleCounts = 0;
@@ -152,4 +195,19 @@ public class GridGenerator : MonoBehaviour
         }
         yield break;
     }
+    
 }
+
+public class FruitData
+{
+    public int Count { get; set; }
+    public List<GameObject> GameObjects { get; set; }
+
+    public FruitData()
+    {
+        Count = 0;
+        GameObjects = new List<GameObject>();
+    }
+}
+
+

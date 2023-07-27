@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviour
     public void PlayGame()
     {
         _audioSource.Play();
-        Invoke("OnPlayGame",_audioSource.clip.length + 0.5f);
+        Invoke("OnPlayGame",_audioSource.clip.length);
     }
 
     public void Quit()

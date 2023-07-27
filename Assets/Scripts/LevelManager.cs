@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    private InputSystem_DragAndDrop _inputSystemDragAndDrop;
     private AudioSource audioSource;
     [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private TextMeshProUGUI TimerText;
@@ -28,6 +29,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        _inputSystemDragAndDrop = GetComponent<InputSystem_DragAndDrop>();
         
         _levelCount = SceneManager.GetActiveScene().buildIndex;
         _currentTime = _totalTime;
@@ -41,6 +43,7 @@ public class LevelManager : MonoBehaviour
             _LevelComplete.SetActive(true);
             LevelText.enabled = false;
             TimerText.enabled = false;
+            _inputSystemDragAndDrop.enabled = false;
         }
 
         if (!_isPaused)
@@ -63,6 +66,7 @@ public class LevelManager : MonoBehaviour
         {
             if (!_isLevelCompleted)
             {
+                _inputSystemDragAndDrop.enabled = false;
                 _LevelFailed.SetActive(true);
                 LevelText.enabled = false;
                 TimerText.text = "Time Finished";                
@@ -74,12 +78,12 @@ public class LevelManager : MonoBehaviour
     public void OnPlayButtonClicked()
     {
         audioSource.Play();
-        Invoke("NextLevel", audioSource.clip.length + 1f);
+        Invoke("NextLevel", audioSource.clip.length);
     }
     public void onRestartButtonClicked()
     {
         audioSource.Play();
-        Invoke("RestartLevel", audioSource.clip.length + 1f); 
+        Invoke("RestartLevel", audioSource.clip.length); 
     }
     
     void NextLevel()
@@ -106,6 +110,7 @@ public class LevelManager : MonoBehaviour
 
     public void onBackButtonClicked()
     {
+        _inputSystemDragAndDrop.enabled = false;
         audioSource.Play();
         LevelText.enabled = false;
         TimerText.enabled = false;
@@ -115,6 +120,7 @@ public class LevelManager : MonoBehaviour
 
     public void OnPauseMenuPlayButtonClicked()
     {
+        _inputSystemDragAndDrop.enabled = true;
         audioSource.Play();
         LevelText.enabled = true;
         TimerText.enabled = true;
@@ -130,6 +136,7 @@ public class LevelManager : MonoBehaviour
     
     public void OnPauseMenuCloseButtonClicked()
     {
+        _inputSystemDragAndDrop.enabled = true;
         audioSource.Play();
         LevelText.enabled = true;
         TimerText.enabled = true;
