@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
 {
+    private AudioSource audioSource;
+    
     [SerializeField] private GameObject gridCellPrefab;
     [SerializeField] private int width;
     private float _cellSize = 1f;
@@ -14,6 +16,7 @@ public class GridGenerator : MonoBehaviour
     
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         GridCellGameObjectsList = new List<GameObject>(7);
         GenerateGrid();
     }
@@ -135,6 +138,7 @@ public class GridGenerator : MonoBehaviour
 
     private IEnumerator MergeObject(List<GameObject> itemList)
     {
+        audioSource.Play();
         foreach (var fruitItem in itemList)
         {
             fruitItem.GetComponent<FruitScript>().transform.DOMove(Vector3.zero, 0.5f).SetEase(Ease.Linear);

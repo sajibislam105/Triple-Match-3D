@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class InputSystem_DragAndDrop : MonoBehaviour
 {
-   [SerializeField]private GridGenerator _gridGenerator;
+    private AudioSource audioSource; 
+    [SerializeField] private AudioClip ObjectDragAudioClip;
+    [SerializeField]private GridGenerator _gridGenerator;
 
     public Action<Transform> ScaleDownObjectAction;
     private Camera _camera;
@@ -22,6 +24,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         _camera = Camera.main;
     }
     void Update()
@@ -96,6 +99,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                         {
                             _toDrag.transform.position = _newGridPosition;
                             _toDrag.GetComponent<FruitScript>().PlacedInGrid();
+                            audioSource.PlayOneShot(ObjectDragAudioClip);
+                            _toDrag = null;
                         }
                     }
                     else

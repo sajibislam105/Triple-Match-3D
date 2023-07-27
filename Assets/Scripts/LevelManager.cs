@@ -5,13 +5,21 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    private AudioSource audioSource;
     [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private TextMeshProUGUI TimerText;
     [SerializeField] private Button backButton;
+    
+    [SerializeField] private Button backToPlay;
+    [SerializeField] private Button landingPage;
+    [SerializeField] private Button close;
 
     [SerializeField] private GameObject _LevelComplete;
     [SerializeField] private GameObject _LevelFailed;
+    [SerializeField] private GameObject _Pausemenu;
 
+    private bool _isPaused;
+    private bool _isLevelCompleted;
     private int _levelCount;
 
     private float _totalTime = 10.0f; //in seconds
@@ -19,21 +27,27 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        _levelCount = 1;
+        audioSource = GetComponent<AudioSource>();
+        
+        _levelCount = SceneManager.GetActiveScene().buildIndex;
         _currentTime = _totalTime;
         LevelText.text = "Level: " + _levelCount;
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (GameObject.FindGameObjectWithTag("Fruit") == null)
         {
+            _isLevelCompleted = true;
             _LevelComplete.SetActive(true);
             LevelText.enabled = false;
             TimerText.enabled = false;
         }
-        Timer();
+
+        if (!_isPaused)
+        {
+            Timer();
+        }
+        
     }
 
     void Timer()
@@ -47,21 +61,70 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            _LevelFailed.SetActive(true);
-            LevelText.enabled = false;
-            TimerText.text = "Time Finished"; 
+            if (!_isLevelCompleted)
+            {
+                _LevelFailed.SetActive(true);
+                LevelText.enabled = false;
+                TimerText.text = "Time Finished";                
+            }
+             
         }
     }
 
     public void OnPlayButtonClicked()
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex + 1);
+        audioSource.Play();
+        Invoke("NextLevel", audioSource.clip.length + 1f);
     }
     public void onRestartButtonClicked()
     {
+        audioSource.Play();
+        Invoke("RestartLevel", audioSource.clip.length + 1f); 
+    }
+    
+    void NextLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex + 1);
+        
+    }
+    
+    void RestartLevel()
+    {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
+        
     }
 
+    public void onBackButtonClicked()
+    {
+        LevelText.enabled = false;
+        TimerText.enabled = false;
+        _isPaused = true;
+        _Pausemenu.SetActive(true);
+    }
+
+    public void OnPauseMenuPlayButtonClicked()
+    {
+        LevelText.enabled = true;
+        TimerText.enabled = true;
+        _isPaused = false;
+        _Pausemenu.SetActive(false);
+    }
+
+    public void OnPauseMenuLandingPageButtonClicked()
+    {
+        SceneManager.LoadScene(0); // 0 means Landing Page
+    }
+    
+    public void OnPauseMenuCloseButtonClicked()
+    {
+        LevelText.enabled = true;
+        TimerText.enabled = true;
+        _isPaused = false;
+        _Pausemenu.SetActive(false);
+    }
+    
+
+    
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,16 +7,30 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    private AudioSource _audioSource;
+    
     [SerializeField] private Button PlayButton;
     [SerializeField] private Button QuitButton;
 
+    private void Start()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
+
     public void PlayGame()
     {
-        SceneManager.LoadScene(1);
+        _audioSource.Play();
+        Invoke("OnPlayGame",_audioSource.clip.length + 0.5f);
     }
 
     public void Quit()
     {
-        Quit();
+        _audioSource.Play();
+        Application.Quit();
+    }
+
+    void OnPlayGame()
+    {
+        SceneManager.LoadScene(1);
     }
 }
