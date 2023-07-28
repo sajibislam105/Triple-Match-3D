@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour
     private bool _isLevelCompleted;
     private int _levelCount;
 
-    private float _totalTime = 25.0f; //in seconds
+    private float _totalTime = 30.0f; //in seconds
     private float _currentTime;
 
     void Start()

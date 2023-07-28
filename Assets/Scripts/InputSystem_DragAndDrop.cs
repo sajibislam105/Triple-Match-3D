@@ -11,6 +11,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     [SerializeField]private GridGenerator _gridGenerator;
 
     public Action<Transform> ScaleDownObjectAction;
+    public Action<FruitScript> ObjectDroppingOnCellAction; 
 
     private bool _isDragging;
     private Transform _toDrag;
@@ -23,8 +24,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
         _camera = Camera.main;
+        audioSource = GetComponent<AudioSource>();
     }
     void Update()
     {
@@ -33,6 +34,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private void DragAndDrop()
     {
         Vector3 v3;
+        
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit? hitObject = CastRay();
@@ -85,7 +87,6 @@ public class InputSystem_DragAndDrop : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
             if (_oldPosition != _newGridPosition && _toDrag != null)
             {
                 for (int i = 0; i < _gridGenerator.GridCellObjectsList.Count; i++)   
@@ -96,6 +97,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                         {
                             _toDrag.parent.transform.position = _newGridPosition;
                             _toDrag.GetComponent<FruitScript>().PlacedInGrid();
+                            //invoke an action to add to the dictionary.
+                            ObjectDroppingOnCellAction?.Invoke(_toDrag.GetComponent<FruitScript>());
                             audioSource.PlayOneShot(ObjectDragAudioClip);
                             _toDrag = null;
                         }
@@ -115,10 +118,10 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                 {
                     _toDrag.parent.transform.DOScale(1f, 0.2f).SetEase(Ease.Linear);
                     _toDrag.parent.transform.DOMove(_oldPosition,0.2f).SetEase(Ease.OutBack);                            
-                }                
-                
+                }              
             }
         }
+        gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
     }
     private RaycastHit? CastRay()
     {

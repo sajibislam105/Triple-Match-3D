@@ -1,6 +1,5 @@
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class FruitScript : MonoBehaviour
 {
@@ -25,9 +24,7 @@ public class FruitScript : MonoBehaviour
         {
             transform.parent.DOScale(0.5f, 0.1f).SetEase(Ease.Linear);
         }
-      
     }
-
     public bool PlacedInGrid()
     {
          _isInGrid = true;

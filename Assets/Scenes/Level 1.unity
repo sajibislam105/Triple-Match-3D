@@ -532,6 +532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282a55d8b083b1a4eae65871799649d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inputSystemDragAndDrop: {fileID: 334341074}
   gridCellPrefab: {fileID: 3214872294680754750, guid: 590412b3917889647b2d23c67071e1af, type: 3}
   width: 7
   GridCellObjectsList: []
