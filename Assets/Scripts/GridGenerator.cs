@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public class GridGenerator : MonoBehaviour
 {
@@ -42,7 +41,6 @@ public class GridGenerator : MonoBehaviour
     private void Update()
     {
         CheckingOccupancyOfCell();
-      //  HasThreeSameObject();
     }
     private void GenerateGrid()
     {
@@ -79,134 +77,132 @@ public class GridGenerator : MonoBehaviour
 
     void OnDroppingObjectToCEll(FruitScript onCellFruitScript)
     {
-        //Debug.Log("Action Called.");
         int _containedObject = 0;
         if (onCellFruitScript != null && _containedObject <= 7)
         {
-            string fruitName1 = onCellFruitScript.fruitName;
+            string fruitName = onCellFruitScript.fruitName;
             //Debug.Log("Fruit Name: " + fruitName);
-            if (!fruitDictionary.ContainsKey(fruitName1))
+            if (!fruitDictionary.ContainsKey(fruitName))
             {
-                //Debug.Log("No existing "+ fruitName1 + ", so added one "+ fruitName1 +" to dictionary");
+                //Debug.Log("No existing "+ fruitName + ", so added one "+ fruitName +" to dictionary");
                 _containedObject ++;
                 fruitData.Count = 1;
                 fruitData.FruitScriptObjects.Add(onCellFruitScript);
-                fruitDictionary.Add(fruitName1,fruitData);
+                fruitDictionary.Add(fruitName,fruitData);
             }
             else
             {
                 _containedObject ++;
                 fruitData.Count++;
-                //Debug.Log("Found " + fruitName1 + " in game object list, fruit count: " + fruitData.Count);
+                //Debug.Log("Found " + fruitName + " in game object list, fruit count: " + fruitData.Count);
                 fruitData.FruitScriptObjects.Add(onCellFruitScript);
             }
-            //printdictionary();
-            HasThreeSameObject();
+            //printDictionary();
+            if (HasThreeSameObject(fruitName))
+            {
+                //send the list
+                MergeObject(fruitData.FruitScriptObjects,fruitName);
+            }
+            
+            //HasThreeSameObject(fruitName);
         }
         else
         {
             //Debug.Log("More than 7 object. No FruitScript found.");
         }
     }
-    /*
-     *  if (HasThreeSameObject())
-                {
-                    _containedObject -= 3;
-                    MergeObject1(fruitData.FruitScriptObjects);
-                    //StartCoroutine(MergeObject(fruitData.FruitScriptObjects));
-                    //Debug.Log("three same objects matched, Merge coroutine started.");
-                }
-                else
-                {
-                    Debug.Log("matched not found yet");
-                }
-                
-        foreach (var fruitData in fruitDictionary.Values)
-        {
-           // StopCoroutine(MergeObject(fruitData.FruitScriptObjects));
-           // Debug.Log("coroutine stopped");
-        }
-     */
-    bool HasThreeSameObject()
+    
+    bool HasThreeSameObject(string FruitName)
     {
         //jei objecct add hoise oidar similar three object ase kina check korte hobe. then jodi thake taile oi 3 ta object merge korte pathabo. then destroy.
         //jei object ta add hoise oita hasthreeobject method e parameter e pathabo.
         // then oi object 3 ta hoise kina check korbe main Dictionary theke. jodi same hoy taile return true
         // ar na hoile return false;
-        /* Dictionary<List<FruitScript>, int> objectCount = new Dictionary<List<FruitScript>, int>();
- 
-         // Iterate through the fruitDictionary and count occurrences
-         foreach (var fruitData in dictionary.Values)
-         {
-             if (objectCount.ContainsKey(fruitData.FruitScriptObjects))
-             {
-                 objectCount[fruitData.FruitScriptObjects]++;
-             }
-             else
-             {
-                 objectCount.Add(fruitData.FruitScriptObjects, 1);
-             }
-         }
-         if (objectCount.Values.Count == 3)
-         {
-             Debug.Log("Three same object");
-             
-             return true;
-         }
-         return false;*/
         
-        if (fruitData.Count == 3)
+        if (fruitDictionary[FruitName].Count >= 3)
         {
             Debug.Log("Three Same Objects");
-            MergeObject1(fruitData.FruitScriptObjects);
+            //fruitDictionary[FruitName].Count = 0;
             return true;
         }
         return false;
-        
-    }
-    private IEnumerator MergeObject(List<FruitScript> itemList)
-    {
-        audioSource.Play();
-        foreach (var fruitItem in itemList)
-        {
-            fruitItem.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
-            fruitItem.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
-            {
-                fruitDictionary.Remove(fruitItem.fruitName);
-                //fruitData.Count = 0;
-                Transform ParentTransform = fruitItem.transform.parent;
-                Destroy(ParentTransform.gameObject,0.1f);
-            }));
-        }
-        yield break;
     }
     
-    private void MergeObject1(List<FruitScript> itemList)
+    private void MergeObject(List<FruitScript> itemList, string ReceivedName)
     {
         Debug.Log("entered merge method");
         audioSource.Play();
+        
+        /*int[] indexes = new int[8];
+        for (int i = 0; i < itemList.Count; i++)
+        {
+            if (itemList[i].fruitName == ReceivedName)
+            {
+                indexes[i] = i;
+            }
+        }*/
+        
         foreach (var fruitItem in itemList)
         {
-        
+            //Debug.Log(fruitDictionary[fruitItem.fruitName].FruitScriptObjects.Count + "   count");
             if (fruitDictionary.ContainsKey(fruitItem.fruitName))
-            {
-                Debug.Log("moving");
-                printdictionary();
-                fruitItem.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
-                fruitItem.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+            { 
+                Debug.Log("Contains Key. " + "Received Name: " + ReceivedName);
+                
+                if (fruitDictionary[ReceivedName].Count >= 3)
                 {
-                    fruitDictionary.Remove(fruitItem.fruitName);
-                    Transform FruitGameobjectParent = fruitItem.transform.parent; 
-                    Debug.Log("destroying");
-                    Destroy(FruitGameobjectParent.gameObject, 0.1f);
-                    fruitData.FruitScriptObjects.Remove(fruitItem);
-                }));
+                    Debug.Log("Count = 3");
+                    fruitItem.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
+                    fruitItem.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+                    {
+                        //printDictionary();
+                        Transform FruitGameobjectParent = fruitItem.transform.parent;
+                        Debug.Log("Destroying");
+                        /*for (int i = 0; i < indexes.Length - 1; i++)
+                        {
+                            fruitData.FruitScriptObjects.RemoveAt(indexes[i]);    
+                        }*/
+                        //FruitGameobjectParent.gameObject.SetActive(false);
+                        fruitData.FruitScriptObjects.Remove(fruitItem);
+                        fruitDictionary.Remove(fruitItem.fruitName);
+                        Destroy(FruitGameobjectParent.gameObject, 0.1f);
+                        fruitDictionary[ReceivedName].Count = 0;
+                    }));
+                }
+                else
+                {
+                    Debug.Log("Count is not 3, so condition exit");
+                }
+                
             }
         }
         
+       /* foreach (var fruitDictionaryValue in fruitDictionary.Values)
+        {
+            var fruitScriptObjects = fruitDictionaryValue.FruitScriptObjects;
+            foreach (var fruitScript in fruitScriptObjects)
+            {
+                if (fruitScript.fruitName == Matchedname)
+                {
+                    fruitScript.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
+                    fruitScript.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+                    {
+                        //printDictionary();
+                        Transform FruitGameobjectParent = fruitScript.transform.parent;
+                        Debug.Log("Destroying");
+                        fruitDictionary.Remove(Matchedname);
+                        //fruitDictionary.Remove(fruitItem.fruitName);
+                        Destroy(FruitGameobjectParent.gameObject, 0.1f);
+                    }));
+                }
+            }
+        }*/
+        
+        
+        
     }
 
-    void printdictionary()
+    void printDictionary()
     {
         foreach (var keyvalue in fruitDictionary)
         {
@@ -214,7 +210,7 @@ public class GridGenerator : MonoBehaviour
             var count = keyvalue.Value.Count;
             var gameObjects = keyvalue.Value.FruitScriptObjects;
             
-            Debug.Log("Object Name: " + name + " Count: "+ count);
+            //Debug.Log("Object Name: " + name + " Count: "+ count);
             foreach (var listItem in gameObjects)
             {
                 Debug.Log("listItem:" + listItem);
@@ -236,5 +232,3 @@ public class FruitData
         FruitScriptObjects = new List<FruitScript>();
     }
 }
-
-
