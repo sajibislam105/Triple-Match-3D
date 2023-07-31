@@ -16,14 +16,13 @@ public class GridGenerator : MonoBehaviour
     
     public List<GridCellScript> GridCellObjectsList;
     private Dictionary<string, FruitData> fruitDictionary;
-    private FruitData fruitData;
+    
     
     void Awake()
     {
         GridCellObjectsList = new List<GridCellScript>(7);
         GenerateGrid();
-        
-        fruitData = new FruitData();
+
         fruitDictionary = new Dictionary<string, FruitData>();
         audioSource = GetComponent<AudioSource>();
     }
@@ -86,6 +85,7 @@ public class GridGenerator : MonoBehaviour
             {
                 //Debug.Log("No existing "+ fruitName + ", so added one "+ fruitName +" to dictionary");
                 _containedObject ++;
+                FruitData fruitData = new FruitData();
                 fruitData.Count = 1;
                 fruitData.FruitScriptObjects.Add(onCellFruitScript);
                 fruitDictionary.Add(fruitName,fruitData);
@@ -93,15 +93,15 @@ public class GridGenerator : MonoBehaviour
             else
             {
                 _containedObject ++;
-                fruitData.Count++;
+                fruitDictionary[fruitName].Count++;
                 //Debug.Log("Found " + fruitName + " in game object list, fruit count: " + fruitData.Count);
-                fruitData.FruitScriptObjects.Add(onCellFruitScript);
+                fruitDictionary[fruitName].FruitScriptObjects.Add(onCellFruitScript);
             }
             //printDictionary();
             if (HasThreeSameObject(fruitName))
             {
                 //send the list
-                MergeObject(fruitData.FruitScriptObjects,fruitName);
+                MergeObject(fruitDictionary[fruitName].FruitScriptObjects,fruitName);
             }
             
             //HasThreeSameObject(fruitName);
@@ -155,15 +155,9 @@ public class GridGenerator : MonoBehaviour
                     fruitItem.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
                     fruitItem.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
                     {
-                        //printDictionary();
                         Transform FruitGameobjectParent = fruitItem.transform.parent;
                         Debug.Log("Destroying");
-                        /*for (int i = 0; i < indexes.Length - 1; i++)
-                        {
-                            fruitData.FruitScriptObjects.RemoveAt(indexes[i]);    
-                        }*/
-                        //FruitGameobjectParent.gameObject.SetActive(false);
-                        fruitData.FruitScriptObjects.Remove(fruitItem);
+                        //fruitDictionary[ReceivedName].FruitScriptObjects.Remove(fruitItem);
                         fruitDictionary.Remove(fruitItem.fruitName);
                         Destroy(FruitGameobjectParent.gameObject, 0.1f);
                         fruitDictionary[ReceivedName].Count = 0;
