@@ -13,7 +13,7 @@ public class LevelManager : MonoBehaviour
     public Action<string> RemainingTimeSendToUIAction;
     
 
-    private float _totalTime = 5.0f; //in seconds
+    private float _totalTime = 15.0f; //in seconds
     private float _currentTime;
     
     private bool _isLevelCompleted;
@@ -48,7 +48,7 @@ public class LevelManager : MonoBehaviour
     
     void Update()
     {
-        if (GameObject.FindGameObjectWithTag("Fruit") == null)
+        if (GameObject.FindGameObjectWithTag("Item") == null)
         {
             //Invoke Level Complete UI
             LevelCompleteAction?.Invoke();

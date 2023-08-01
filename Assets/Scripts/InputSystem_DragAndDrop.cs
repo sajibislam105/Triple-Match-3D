@@ -41,7 +41,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit? hitObject = CastRay();
-            if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Fruit") && !hitObject.Value.transform.GetComponent<ItemScript>()._isInGrid)
+            if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<ItemScript>()._isInGrid)
             {
                 _toDrag = hitObject.Value.transform;
                 _distance = hitObject.Value.transform.position.z - _camera.transform.position.z;
@@ -50,7 +50,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
 
             if (_toDrag != null)
             {
-                _oldPositionOfItem = _toDrag.parent.transform.position; //current position of object    
+                _oldPositionOfItem = _toDrag.transform.position; //current position of object    
             }
             
         }
@@ -59,12 +59,12 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         {
             v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _distance - 2f);
             v3 = _camera.ScreenToWorldPoint(v3);
-            _toDrag.parent.position = v3;
+            _toDrag.position = v3;
 
             Vector3 cameraToGridDirection =
-                _toDrag.parent.position -
+                _toDrag.position -
                 _camera.transform.position; //ray direction camera to _toDrag then _toDrag to Grid.
-            Ray rayCastTowardsGrid = new Ray(_toDrag.parent.transform.position, cameraToGridDirection);
+            Ray rayCastTowardsGrid = new Ray(_toDrag.transform.position, cameraToGridDirection);
             RaycastHit GridHit;
             Debug.DrawRay(rayCastTowardsGrid.origin, rayCastTowardsGrid.direction * 100f, Color.yellow);
             
@@ -98,7 +98,10 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                     {
                         if (gridGenerator.GridCellObjectsList[i].transform.position == _newGridPosition) // checking if gridCell and RayHit Cell are same.
                         {
-                            _toDrag.parent.transform.position = _newGridPosition;
+                            var offsetPosition = new Vector3(0, 0, -0.5f);
+                            _newGridPosition += offsetPosition; 
+                            _toDrag.transform.position = _newGridPosition;
+                            
                             _toDrag.GetComponent<ItemScript>().PlacedInGrid();
                             //invoke an action to add to the dictionary.
                             ObjectDroppingOnCellAction?.Invoke(_toDrag.GetComponent<ItemScript>());
@@ -110,7 +113,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                     {
                         if (_toDrag !=null)
                         {
-                            _toDrag.parent.transform.position = _oldPositionOfItem;                            
+                            _toDrag.transform.position = _oldPositionOfItem;                            
                         }
                     }
                 }   
@@ -119,8 +122,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
             {
                 if (_toDrag !=null)
                 {
-                    _toDrag.parent.transform.DOScale(1f, 0.2f).SetEase(Ease.Linear);
-                    _toDrag.parent.transform.DOMove(_oldPositionOfItem,0.2f).SetEase(Ease.OutBack);                            
+                    _toDrag.transform.DOScale(1f, 0.2f).SetEase(Ease.Linear);
+                    _toDrag.transform.DOMove(_oldPositionOfItem,0.2f).SetEase(Ease.OutBack);                            
                 }              
             }
         }

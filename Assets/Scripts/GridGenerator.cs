@@ -141,13 +141,13 @@ public class GridGenerator : MonoBehaviour
                 if (_itemDictionary[ReceivedName].Count >= 3)
                 {
                     //Debug.Log("Count = 3");
-                    fruitItem.transform.parent.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
-                    fruitItem.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+                    fruitItem.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
+                    fruitItem.transform.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
                     {
-                        Transform FruitGameobjectParent = fruitItem.transform.parent;
+                        Transform FruitGameobject = fruitItem.transform;
                         //Debug.Log("Destroying");
                         _itemDictionary.Remove(fruitItem.fruitName);
-                        Destroy(FruitGameobjectParent.gameObject, 0.1f);
+                        Destroy(FruitGameobject.gameObject, 0.1f);
                         _itemDictionary[ReceivedName].Count = 0;
                     }));
                 }

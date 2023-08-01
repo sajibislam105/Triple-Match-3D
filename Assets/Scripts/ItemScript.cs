@@ -27,7 +27,7 @@ public class ItemScript : MonoBehaviour
     {
         if (clickedObject == transform)
         {
-            transform.parent.DOScale(0.5f, 0.1f).SetEase(Ease.Linear);
+            transform.DOScale(0.5f, 0.1f).SetEase(Ease.Linear);
         }
     }
     public bool PlacedInGrid()

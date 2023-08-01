@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Fruit
   - GridCell
-  - Apple
+  - Item
   layers:
   - Default
   - TransparentFX
