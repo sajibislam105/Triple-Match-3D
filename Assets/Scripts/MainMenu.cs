@@ -1,14 +1,15 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
     private AudioSource _audioSource;
     
-    [SerializeField] private Button PlayButton;
-    [SerializeField] private Button QuitButton;
+    [SerializeField] private Button playButton;
+    [SerializeField] private Button quitButton;
 
     private void Start()
     {

@@ -206,9 +206,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 334341075}
+  - component: {fileID: 334341077}
   - component: {fileID: 334341074}
   - component: {fileID: 334341076}
-  - component: {fileID: 334341077}
+  - component: {fileID: 334341078}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -228,8 +229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dae20235bf78f5d48af49b892787a774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectDragAudioClip: {fileID: 8300000, guid: 40a9ceda53249c942a4485afe4f4d450, type: 3}
-  _gridGenerator: {fileID: 398109052}
+  objectDragAudioClip: {fileID: 8300000, guid: ea772fb354ae117468cee3bff34bb567, type: 3}
   gridCellStatusList: 
 --- !u!4 &334341075
 Transform:
@@ -262,15 +262,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5412b8e6be8daed46b9d28634badf5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LevelText: {fileID: 1231062758}
-  TimerText: {fileID: 487829096}
-  backButton: {fileID: 1347510292}
-  backToPlay: {fileID: 484658313}
-  landingPage: {fileID: 2006320481}
-  close: {fileID: 1945242805}
-  _LevelComplete: {fileID: 495828467}
-  _LevelFailed: {fileID: 531068143}
-  _Pausemenu: {fileID: 758505807}
 --- !u!82 &334341077
 AudioSource:
   m_ObjectHideFlags: 0
@@ -367,6 +358,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &334341078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334341073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bdebe1360cdb24581e94d1f98ada6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelText: {fileID: 1231062758}
+  TimerText: {fileID: 487829096}
+  backButton: {fileID: 1347510292}
+  backToPlay: {fileID: 484658313}
+  landingPage: {fileID: 2006320481}
+  close: {fileID: 1945242805}
+  _LevelComplete: {fileID: 495828467}
+  _LevelFailed: {fileID: 531068143}
+  _Pausemenu: {fileID: 758505807}
 --- !u!1 &338274515
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,10 +544,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282a55d8b083b1a4eae65871799649d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputSystemDragAndDrop: {fileID: 334341074}
   gridCellPrefab: {fileID: 3214872294680754750, guid: 590412b3917889647b2d23c67071e1af, type: 3}
   width: 7
-  GridCellObjectsList: []
 --- !u!4 &398109053
 Transform:
   m_ObjectHideFlags: 0
@@ -798,8 +808,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: OnPauseMenuPlayButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -1169,8 +1179,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: onRestartButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -1581,8 +1591,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: onRestartButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -2681,8 +2691,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: OnPlayButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -2951,8 +2961,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: onBackButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -3160,8 +3170,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: onRestartButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -3546,8 +3556,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: OnPauseMenuCloseButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -3679,8 +3689,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 334341076}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 334341078}
+        m_TargetAssemblyTypeName: UI_Manager, Assembly-CSharp
         m_MethodName: OnPauseMenuLandingPageButtonClicked
         m_Mode: 1
         m_Arguments:

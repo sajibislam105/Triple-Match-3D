@@ -1,57 +1,64 @@
-using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    private InputSystem_DragAndDrop _inputSystemDragAndDrop;
+    private UI_Manager UIManager;
     private AudioSource audioSource;
-    [SerializeField] private TextMeshProUGUI LevelText;
-    [SerializeField] private TextMeshProUGUI TimerText;
-    [SerializeField] private Button backButton;
+
     
-    [SerializeField] private Button backToPlay;
-    [SerializeField] private Button landingPage;
-    [SerializeField] private Button close;
+    public Action LevelCompleteAction;
+    public Action LevelFailedAction;
+    public Action<string> RemainingTimeSendToUIAction;
+    
 
-    [SerializeField] private GameObject _LevelComplete;
-    [SerializeField] private GameObject _LevelFailed;
-    [SerializeField] private GameObject _Pausemenu;
-
-    private bool _isPaused;
-    private bool _isLevelCompleted;
-    private int _levelCount;
-
-    private float _totalTime = 30.0f; //in seconds
+    private float _totalTime = 5.0f; //in seconds
     private float _currentTime;
+    
+    private bool _isLevelCompleted;
+    private bool _isGamePaused;
+
+    private void Awake()
+    {
+        UIManager = GetComponent<UI_Manager>();
+        audioSource = GetComponent<AudioSource>();
+        
+    }
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        _inputSystemDragAndDrop = GetComponent<InputSystem_DragAndDrop>();
         
-        _levelCount = SceneManager.GetActiveScene().buildIndex;
-        _currentTime = _totalTime;
-        LevelText.text = "Level: " + _levelCount;
+        _currentTime = _totalTime; // so that it gets reset every time level start again.
     }
+    
+    private void OnEnable()
+    {
+        UIManager.PlayNextUIButtonClickedAction += NextLevel;
+        UIManager.RestartUIButtonClickedAction += RestartLevel;
+        UIManager.GamePausedAction += PauseStatus;
+    }
+
+    private void OnDisable()
+    {
+        UIManager.PlayNextUIButtonClickedAction -= NextLevel;
+        UIManager.RestartUIButtonClickedAction -= RestartLevel;
+        UIManager.GamePausedAction -= PauseStatus;
+    }
+    
     void Update()
     {
         if (GameObject.FindGameObjectWithTag("Fruit") == null)
         {
+            //Invoke Level Complete UI
+            LevelCompleteAction?.Invoke();
             _isLevelCompleted = true;
-            _LevelComplete.SetActive(true);
-            LevelText.enabled = false;
-            TimerText.enabled = false;
-            backButton.enabled = false;
-            _inputSystemDragAndDrop.enabled = false;
         }
 
-        if (!_isPaused)
+        if (!_isGamePaused)
         {
-            Timer();
+            Timer();            
         }
-        
     }
 
     void Timer()
@@ -61,33 +68,20 @@ public class LevelManager : MonoBehaviour
             _currentTime -= Time.deltaTime; 
             int minutes = Mathf.FloorToInt(_currentTime / 60f);
             int seconds = Mathf.FloorToInt(_currentTime % 60f);
-            TimerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            var remainingTime= string.Format("{0:00}:{1:00}", minutes, seconds);
+            RemainingTimeSendToUIAction?.Invoke(remainingTime);
         }
         else
         {
             if (!_isLevelCompleted)
             {
-                _inputSystemDragAndDrop.enabled = false;
-                _LevelFailed.SetActive(true);
-                LevelText.enabled = false;
-                TimerText.text = "Time Finished";
-                backButton.enabled = false;
+               //invoke on level failed
+               LevelFailedAction?.Invoke();
             }
              
         }
     }
 
-    public void OnPlayButtonClicked()
-    {
-        audioSource.Play();
-        Invoke("NextLevel", audioSource.clip.length);
-    }
-    public void onRestartButtonClicked()
-    {
-        audioSource.Play();
-        Invoke("RestartLevel", audioSource.clip.length); 
-    }
-    
     void NextLevel()
     {
         int lastSceneIndex = SceneManager.sceneCountInBuildSettings - 1;
@@ -102,50 +96,15 @@ public class LevelManager : MonoBehaviour
             SceneManager.LoadScene(0); // 0 means landing page
         }
     }
-    
     void RestartLevel()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
-        
     }
 
-    public void onBackButtonClicked()
+    private void PauseStatus(bool pauseStatus)
     {
-        _inputSystemDragAndDrop.enabled = false;
-        audioSource.Play();
-        LevelText.enabled = false;
-        TimerText.enabled = false;
-        _isPaused = true;
-        _Pausemenu.SetActive(true);
+        _isGamePaused = pauseStatus;
     }
 
-    public void OnPauseMenuPlayButtonClicked()
-    {
-        _inputSystemDragAndDrop.enabled = true;
-        audioSource.Play();
-        LevelText.enabled = true;
-        TimerText.enabled = true;
-        _isPaused = false;
-        _Pausemenu.SetActive(false);
-    }
-
-    public void OnPauseMenuLandingPageButtonClicked()
-    {
-        audioSource.Play();
-        SceneManager.LoadScene(0); // 0 means Landing Page
-    }
-    
-    public void OnPauseMenuCloseButtonClicked()
-    {
-        _inputSystemDragAndDrop.enabled = true;
-        audioSource.Play();
-        LevelText.enabled = true;
-        TimerText.enabled = true;
-        _isPaused = false;
-        _Pausemenu.SetActive(false);
-    }
-    
-
-    
 }

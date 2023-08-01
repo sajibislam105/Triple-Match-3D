@@ -1,21 +1,26 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class FruitScript : MonoBehaviour
+public class ItemScript : MonoBehaviour
 {
-    [SerializeField] private InputSystem_DragAndDrop _ScallingDown;
+    private InputSystem_DragAndDrop scallingDown;
     [SerializeField] public string fruitName;
     
     public bool _isInGrid;
-    
+
+    private void Awake()
+    {
+        scallingDown = FindObjectOfType<InputSystem_DragAndDrop>();
+    }
+
     private void OnEnable()
     {
-        _ScallingDown.ScaleDownObjectAction += OnScaleDowned;
+        scallingDown.ScaleDownObjectAction += OnScaleDowned;
     }
 
     private void OnDisable()
     {
-        _ScallingDown.ScaleDownObjectAction -= OnScaleDowned;
+        scallingDown.ScaleDownObjectAction -= OnScaleDowned;
     }
     
     void OnScaleDowned(Transform clickedObject)
