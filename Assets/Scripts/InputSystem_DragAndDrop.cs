@@ -12,7 +12,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private GridGenerator gridGenerator;
 
     public Action<Transform> ScaleDownObjectAction;
-    public Action<ItemScript> ObjectDroppingOnCellAction; 
+    public Action<Item> ObjectDroppingOnCellAction; 
 
     private bool _isDragging;
     private Transform _toDrag;
@@ -41,7 +41,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit? hitObject = CastRay();
-            if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<ItemScript>()._isInGrid)
+            if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<Item>()._isInGrid)
             {
                 _toDrag = hitObject.Value.transform;
                 _distance = hitObject.Value.transform.position.z - _camera.transform.position.z;
@@ -102,9 +102,9 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                             _newGridPosition += offsetPosition; 
                             _toDrag.transform.position = _newGridPosition;
                             
-                            _toDrag.GetComponent<ItemScript>().PlacedInGrid();
+                            _toDrag.GetComponent<Item>().PlacedInGrid();
                             //invoke an action to add to the dictionary.
-                            ObjectDroppingOnCellAction?.Invoke(_toDrag.GetComponent<ItemScript>());
+                            ObjectDroppingOnCellAction?.Invoke(_toDrag.GetComponent<Item>());
                             audioSource.PlayOneShot(objectDragAudioClip);
                             _toDrag = null;
                         }
@@ -141,5 +141,4 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         }
         return null;
     }
-
 }

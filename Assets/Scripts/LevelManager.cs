@@ -4,14 +4,11 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    private UI_Manager UIManager;
-    private AudioSource audioSource;
+    private UIManager UIManager;
 
-    
     public Action LevelCompleteAction;
     public Action LevelFailedAction;
     public Action<string> RemainingTimeSendToUIAction;
-    
 
     private float _totalTime = 15.0f; //in seconds
     private float _currentTime;
@@ -21,9 +18,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        UIManager = GetComponent<UI_Manager>();
-        audioSource = GetComponent<AudioSource>();
-        
+        UIManager = FindObjectOfType<UIManager>();
     }
 
     void Start()

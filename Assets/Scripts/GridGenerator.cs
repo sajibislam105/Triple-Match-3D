@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GridGenerator : MonoBehaviour
 {
@@ -81,12 +80,12 @@ public class GridGenerator : MonoBehaviour
         return occupancyStatusList;
     }
 
-    void OnDroppingObjectToCEll(ItemScript onCell_ItemScript)
+    void OnDroppingObjectToCEll(Item onCellItem)
     {
         int _containedObject = 0;
-        if (onCell_ItemScript != null && _containedObject <= 7)
+        if (onCellItem != null && _containedObject <= 7)
         {
-            string fruitName = onCell_ItemScript.fruitName;
+            string fruitName = onCellItem.fruitName;
             //Debug.Log("Fruit Name: " + fruitName);
             if (!_itemDictionary.ContainsKey(fruitName))
             {
@@ -94,7 +93,7 @@ public class GridGenerator : MonoBehaviour
                 _containedObject ++;
                 itemInformation itemInformation = new itemInformation();
                 itemInformation.Count = 1;
-                itemInformation.FruitScriptObjects.Add(onCell_ItemScript);
+                itemInformation.FruitScriptObjects.Add(onCellItem);
                 _itemDictionary.Add(fruitName,itemInformation);
             }
             else
@@ -102,7 +101,7 @@ public class GridGenerator : MonoBehaviour
                 _containedObject ++;
                 _itemDictionary[fruitName].Count++;
                 //Debug.Log("Found " + fruitName + " in game object list, fruit count: " + fruitData.Count);
-                _itemDictionary[fruitName].FruitScriptObjects.Add(onCell_ItemScript);
+                _itemDictionary[fruitName].FruitScriptObjects.Add(onCellItem);
             }
             //printDictionary();
             if (HasThreeSameObject(fruitName))
@@ -128,7 +127,7 @@ public class GridGenerator : MonoBehaviour
         return false;
     }
     
-    private void MergeObject(List<ItemScript> itemList, string ReceivedName)
+    private void MergeObject(List<Item> itemList, string ReceivedName)
     {
         //Debug.Log("entered merge method");
         audioSource.Play();
@@ -159,6 +158,7 @@ public class GridGenerator : MonoBehaviour
         }
     }
 
+    //for debug purposes
     void printDictionary()
     {
         foreach (var keyvalue in _itemDictionary)
@@ -181,11 +181,11 @@ public class GridGenerator : MonoBehaviour
 public class itemInformation
 {
     public int Count { get; set; }
-    public List<ItemScript> FruitScriptObjects { get; set; }
+    public List<Item> FruitScriptObjects { get; set; }
 
     public itemInformation() //constructor 
     {
         Count = 0;
-        FruitScriptObjects = new List<ItemScript>();
+        FruitScriptObjects = new List<Item>();
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UI_Manager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
     private InputSystem_DragAndDrop _inputSystemDragAndDrop;
     private AudioSource audioSource;
@@ -31,9 +31,9 @@ public class UI_Manager : MonoBehaviour
 
     private void Awake()
     {
-        levelManager = GetComponent<LevelManager>();
+        levelManager =FindObjectOfType<LevelManager>();
+        _inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
         audioSource = GetComponent<AudioSource>();
-        _inputSystemDragAndDrop = GetComponent<InputSystem_DragAndDrop>();
     }
     private void OnEnable()
     {

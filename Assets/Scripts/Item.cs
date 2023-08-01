@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class ItemScript : MonoBehaviour
+public class Item : MonoBehaviour
 {
     private InputSystem_DragAndDrop scallingDown;
     [SerializeField] public string fruitName;
