@@ -9,9 +9,11 @@ public class LevelManager : MonoBehaviour
     public Action LevelCompleteAction;
     public Action LevelFailedAction;
     public Action<string> RemainingTimeSendToUIAction;
+    public Action<float> StarAchievedAction;
 
-    private float _totalTime = 15.0f; //in seconds
+    private float _totalTime = 10.0f; //in seconds
     private float _currentTime;
+    private float _totalTimeTakenToCompleteLevel;
     
     private bool _isLevelCompleted;
     private bool _isGamePaused;
@@ -43,11 +45,22 @@ public class LevelManager : MonoBehaviour
     
     void Update()
     {
-        if (GameObject.FindGameObjectWithTag("Item") == null)
+        if (GameObject.FindGameObjectWithTag("Item") == null && !_isLevelCompleted)
         {
             //Invoke Level Complete UI
             LevelCompleteAction?.Invoke();
             _isLevelCompleted = true;
+            if (_isLevelCompleted)
+            {
+                _totalTimeTakenToCompleteLevel = _totalTime - _currentTime;
+                //Debug.Log("Total time taken to complete the level: " + _totalTimeTakenToCompleteLevel
+                float _remainingTime = _totalTime - _totalTimeTakenToCompleteLevel;
+                float _percentRemaining = (_remainingTime / _totalTime) * 100;
+                
+                //invoke star sequence
+                StarAchievedAction?.Invoke(_percentRemaining);
+            }
+            
         }
 
         if (!_isGamePaused)
@@ -63,8 +76,8 @@ public class LevelManager : MonoBehaviour
             _currentTime -= Time.deltaTime; 
             int minutes = Mathf.FloorToInt(_currentTime / 60f);
             int seconds = Mathf.FloorToInt(_currentTime % 60f);
-            var remainingTime= string.Format("{0:00}:{1:00}", minutes, seconds);
-            RemainingTimeSendToUIAction?.Invoke(remainingTime);
+            string remainingTimeText= string.Format("{0:00}:{1:00}", minutes, seconds);
+            RemainingTimeSendToUIAction?.Invoke(remainingTimeText);
         }
         else
         {
@@ -73,7 +86,6 @@ public class LevelManager : MonoBehaviour
                //invoke on level failed
                LevelFailedAction?.Invoke();
             }
-             
         }
     }
 

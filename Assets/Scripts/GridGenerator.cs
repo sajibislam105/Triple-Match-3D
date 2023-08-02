@@ -55,7 +55,7 @@ public class GridGenerator : MonoBehaviour
 
         for (int x = 0; x < width; x++)
         {
-            Vector3 worldPosition = new Vector3( (startX + x ) *( _cellSize + _spaceBetweenCell), 0,  0);
+            Vector3 worldPosition = new Vector3( (startX + x ) *( _cellSize + _spaceBetweenCell), 0,  gameObject.transform.position.z);
             GridCellScript gridCellObject = Instantiate(gridCellPrefab, worldPosition, Quaternion.identity);
             if (gridCellObject != null)
             {
@@ -65,9 +65,10 @@ public class GridGenerator : MonoBehaviour
             gridCellObject.gameObject.name = "Grid Cell " + name;
             name++;
         }
-        gameObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
+        //gameObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
+        //gameObject.transform.position = new Vector3(0f, 0.5f, -3.5f);
         transform.Translate(transform.position.x,transform.position.y,0);
-        transform.DOScale(0.70f, 0.01f).SetEase(Ease.Linear);
+        transform.DOScale(0.6f, 0.01f).SetEase(Ease.Linear);
     }
 
     public List<bool> CheckingOccupancyOfCell()
@@ -120,7 +121,7 @@ public class GridGenerator : MonoBehaviour
     {
         if (_itemDictionary[FruitName].Count >= 3)
         {
-            Debug.Log("Three Same Objects");
+            //Debug.Log("Three Same Objects");
             //fruitDictionary[FruitName].Count = 0;
             return true;
         }

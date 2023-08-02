@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,6 +27,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _LevelFailed;
     [SerializeField] private GameObject _Pausemenu;
 
+    [SerializeField] private GameObject Star;
+    [SerializeField] private Image _imagestar;
+    [SerializeField] private Image _imagestar1;
+    [SerializeField] private Image _imagestar2;
+
     private bool _isPaused;
     private string _levelCount;
 
@@ -40,12 +46,14 @@ public class UIManager : MonoBehaviour
         levelManager.RemainingTimeSendToUIAction += ReceivedRemainingTime;
         levelManager.LevelCompleteAction += onLevelComplete;
         levelManager.LevelFailedAction += onLevelFailed;
+        levelManager.StarAchievedAction += OnstarAchieved;
     }
     private void OnDisable()
     {
         levelManager.RemainingTimeSendToUIAction -= ReceivedRemainingTime;
         levelManager.LevelCompleteAction -= onLevelComplete;
         levelManager.LevelFailedAction -= onLevelFailed;
+        levelManager.StarAchievedAction -= OnstarAchieved;
     }
 
     void Start()
@@ -72,10 +80,10 @@ public class UIManager : MonoBehaviour
         backButton.enabled = false;
     }
 
-    private void OnLevelCountAction(int level)
+    /*private void OnLevelCountAction(int level)
     {
         _levelCount = level.ToString();
-    }
+    }*/
     
     
     private void ReceivedRemainingTime(string received_time)
@@ -95,10 +103,8 @@ public class UIManager : MonoBehaviour
         audioSource.Play();
         //invoke restart
         RestartUIButtonClickedAction?.Invoke();
-         
     }
-    
-    
+
     public void onBackButtonClicked()
     {
         _inputSystemDragAndDrop.enabled = false;
@@ -140,7 +146,29 @@ public class UIManager : MonoBehaviour
         GamePausedAction?.Invoke(_isPaused);
         _Pausemenu.SetActive(false);
     }
-    
 
-    
+    void OnstarAchieved(float percentageRemaining)
+    {
+        if (percentageRemaining > 50f)
+        {
+            //Debug.Log("3 star");
+            _imagestar.enabled = true;
+            _imagestar1.enabled = true;
+            _imagestar2.enabled = true;
+        }
+        else if (percentageRemaining > 25f)
+        {
+            //Debug.Log("2 star");
+            _imagestar.enabled = true;
+            _imagestar1.enabled = true;
+            _imagestar2.enabled = false;
+        }
+        else
+        {
+            Debug.Log("1 star");
+            _imagestar.enabled = true;
+            _imagestar1.enabled = false;
+            _imagestar2.enabled = false;
+        }
+    }
 }
