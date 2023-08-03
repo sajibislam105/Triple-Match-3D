@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
     public Action<string> RemainingTimeSendToUIAction;
     public Action<float> StarAchievedAction;
 
-    private float _totalTime = 10.0f; //in seconds
+    private float _totalTime = 150.0f; //in seconds
     private float _currentTime;
     private float _totalTimeTakenToCompleteLevel;
     

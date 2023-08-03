@@ -7,6 +7,9 @@ public class GridGenerator : MonoBehaviour
 {
     private AudioSource audioSource;
     private InputSystem_DragAndDrop inputSystemDragAndDrop;
+    private UIManager _uiManager;
+    private ParticleSystem mergeParticleSystem;
+    [SerializeField] private AudioClip MergeAudioClip; 
 
     [SerializeField] private GridCellScript gridCellPrefab;
     [SerializeField] private int width;
@@ -23,6 +26,7 @@ public class GridGenerator : MonoBehaviour
         get {return _gridCellObjectsList;}
     }
 
+    
     void Awake()
     {
         inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
@@ -31,6 +35,8 @@ public class GridGenerator : MonoBehaviour
 
         _itemDictionary = new Dictionary<string, itemInformation>();
         audioSource = GetComponent<AudioSource>();
+        mergeParticleSystem = GetComponentInChildren<ParticleSystem>();
+        _uiManager = FindObjectOfType<UIManager>();
     }
 
     private void OnEnable()
@@ -86,29 +92,29 @@ public class GridGenerator : MonoBehaviour
         int _containedObject = 0;
         if (onCellItem != null && _containedObject <= 7)
         {
-            string fruitName = onCellItem.fruitName;
+            string itemName = onCellItem.fruitName;
             //Debug.Log("Fruit Name: " + fruitName);
-            if (!_itemDictionary.ContainsKey(fruitName))
+            if (!_itemDictionary.ContainsKey(itemName))
             {
                 //Debug.Log("No existing "+ fruitName + ", so added one "+ fruitName +" to dictionary");
                 _containedObject ++;
                 itemInformation itemInformation = new itemInformation();
                 itemInformation.Count = 1;
                 itemInformation.FruitScriptObjects.Add(onCellItem);
-                _itemDictionary.Add(fruitName,itemInformation);
+                _itemDictionary.Add(itemName,itemInformation);
             }
             else
             {
                 _containedObject ++;
-                _itemDictionary[fruitName].Count++;
+                _itemDictionary[itemName].Count++;
                 //Debug.Log("Found " + fruitName + " in game object list, fruit count: " + fruitData.Count);
-                _itemDictionary[fruitName].FruitScriptObjects.Add(onCellItem);
+                _itemDictionary[itemName].FruitScriptObjects.Add(onCellItem);
             }
             //printDictionary();
-            if (HasThreeSameObject(fruitName))
+            if (HasThreeSameObject(itemName))
             {
                 //send the list
-                MergeObject(_itemDictionary[fruitName].FruitScriptObjects,fruitName);
+                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName);
             }
         }
         else
@@ -132,24 +138,30 @@ public class GridGenerator : MonoBehaviour
     {
         //Debug.Log("entered merge method");
         audioSource.Play();
-        foreach (var fruitItem in itemList)
+        foreach (var item in itemList)
         {
             //Debug.Log(fruitDictionary[fruitItem.fruitName].FruitScriptObjects.Count + "   count");
-            if (_itemDictionary.ContainsKey(fruitItem.fruitName))
+            if (_itemDictionary.ContainsKey(item.fruitName))
             { 
                 //Debug.Log("Contains Key. " + "Received Name: " + ReceivedName);
                 if (_itemDictionary[ReceivedName].Count >= 3)
                 {
                     //Debug.Log("Count = 3");
-                    fruitItem.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear);
-                    fruitItem.transform.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+                    item.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear).OnComplete((() =>
                     {
-                        Transform FruitGameobject = fruitItem.transform;
+                        mergeParticleSystem.transform.position = Vector3.zero;
+                        audioSource.PlayOneShot(MergeAudioClip);
+                        mergeParticleSystem.Play();
+                    }));
+                    item.transform.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+                    {
+                        Transform FruitGameobject = item.transform;
                         //Debug.Log("Destroying");
-                        _itemDictionary.Remove(fruitItem.fruitName);
+                        _itemDictionary.Remove(item.fruitName);
                         Destroy(FruitGameobject.gameObject, 0.1f);
                         _itemDictionary[ReceivedName].Count = 0;
                     }));
+                    
                 }
                 else
                 {
@@ -157,6 +169,8 @@ public class GridGenerator : MonoBehaviour
                 }
             }
         }
+       
+        
     }
 
     //for debug purposes
