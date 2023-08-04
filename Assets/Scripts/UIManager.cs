@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +11,8 @@ public class UIManager : MonoBehaviour
     private AudioSource audioSource;
     private LevelManager levelManager;
 
-    private GameObject RemainingItemCardSlot;
+    [SerializeField]  private GameObject RemainingItemCardSlot;
+    [SerializeField] private Transform DesiredParent;
     
     public Action RestartUIButtonClickedAction;
     public Action PlayNextUIButtonClickedAction;
@@ -217,33 +217,38 @@ public class UIManager : MonoBehaviour
                 }
             }
         }
+        GenerateItemCard();
     }
 
     void GenerateItemCard()
     {
-        //GameObject Cards = Instantiate(RemainingItemCardSlot,t)
+        foreach (var KeyValuePair in AllItemData)
+        {
+            string remainingItemName = KeyValuePair.Key;
+            int remainingItemCount = KeyValuePair.Value.itemCounts;
+
+            GameObject itemCard = Instantiate(RemainingItemCardSlot, DesiredParent);
+            Card card = itemCard.GetComponent<Card>();
+
+            card.SetItemDetails(remainingItemName, remainingItemCount);
+        }
     }
     
     public void RemoveItemFromDictionary(Item itemScript)
     {
         string itemName = itemScript.fruitName;
-        Debug.Log("Item name: "+itemName);
+        //Debug.Log("Item name: "+itemName);
         
         if (AllItemData.ContainsKey(itemName))
         {
-            // Decrement the count
+            // Decrementing the count
             AllItemData[itemName].itemCounts--;
             
-            // Remove the item script from the list
+            // Removing the item script from the list
             AllItemData[itemName].ItemScriptObjects.Remove(itemScript);
-            
-             //destroy hoilei count bartase konta destroy hoitase oita check hoitasena.
-             //3 ta thaktese already scene e sheigulao show hoite pare 
+
             int _itemCount = AllItemData[itemName].ItemScriptObjects.Count;
-            
-            Debug.Log(_itemCount);
-            itemCountText.text = _itemCount.ToString();
-            itemNameText.text = itemName;
+            //Debug.Log("Item Count:" + _itemCount);
 
             // If the count reaches 0, remove the fruit name from the dictionary
             if (AllItemData[itemName].itemCounts <= 0)
@@ -251,7 +256,23 @@ public class UIManager : MonoBehaviour
                 AllItemData.Remove(itemName);
             }
         }
+        
+        // Updating the UI after removing/merging the items
+        UpdateCardUI();
     }
+    
+    private void UpdateCardUI()
+    {
+        // Clearing the full DesiredParent
+        foreach (Transform child in DesiredParent)
+        {
+            Destroy(child.gameObject);
+        }
+        
+        // Regenerating the Card UI based on the updated dictionary so the value of Items Card get updated.
+        GenerateItemCard();
+    }
+    
      void printDictionary()
     {
         foreach (var keyvalue in AllItemData)

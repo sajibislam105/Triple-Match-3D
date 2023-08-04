@@ -25,7 +25,6 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        
         _currentTime = _totalTime; // so that it gets reset every time level start again.
     }
     
@@ -60,7 +59,6 @@ public class LevelManager : MonoBehaviour
                 //invoke star sequence
                 StarAchievedAction?.Invoke(_percentRemaining);
             }
-            
         }
 
         if (!_isGamePaused)
@@ -113,5 +111,5 @@ public class LevelManager : MonoBehaviour
     {
         _isGamePaused = pauseStatus;
     }
-
+    
 }
