@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class RemainingItemManager : MonoBehaviour
@@ -47,6 +48,7 @@ public class RemainingItemManager : MonoBehaviour
             }
         }
         GenerateItemCard();
+        
     }
 
     void GenerateItemCard()

@@ -683,7 +683,7 @@ RectTransform:
   - {fileID: 8982189156779471494}
   - {fileID: 1363590876253879801}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -890,6 +890,7 @@ GameObject:
   - component: {fileID: 3017974621038880148}
   - component: {fileID: 6386656456333014915}
   - component: {fileID: 2348537307600562623}
+  - component: {fileID: 6696073053999567871}
   m_Layer: 0
   m_Name: RemainingItemPanel
   m_TagString: Untagged
@@ -968,12 +969,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 10
+    m_Left: 20
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 3
-  m_Spacing: 5
+  m_Spacing: 10
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
@@ -981,6 +982,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &6696073053999567871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3011389618481365476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c914a236b90f3d4988425b8a6cc813e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RemainingItemCardSlot: {fileID: 3950610579389065416, guid: a16840e182fa4774c98d7c9b75a29763, type: 3}
+  DesiredParent: {fileID: 7131121504342858296}
 --- !u!1 &3416953881493433834
 GameObject:
   m_ObjectHideFlags: 0
