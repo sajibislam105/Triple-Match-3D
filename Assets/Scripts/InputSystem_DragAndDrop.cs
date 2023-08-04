@@ -6,17 +6,18 @@ using UnityEngine;
 public class InputSystem_DragAndDrop : MonoBehaviour
 {
     private Camera _camera;
-    private AudioSource audioSource; 
+    private AudioSource _audioSource;
+    //private UIManager _uiManager;
+    private RemainingItemManager _remainingItemManager;
     [SerializeField] private AudioClip objectDragAudioClip;
     
-    private GridGenerator gridGenerator;
+    private GridGenerator _gridGenerator;
 
     public Action<Transform> ScaleDownObjectAction;
     public Action<Item> ObjectDroppingOnCellAction; 
 
     private bool _isDragging;
     private Transform _toDrag;
-    private float _distance;
     private Vector3 _newGridPosition;
     private Vector3 _oldPositionOfItem;
     
@@ -25,8 +26,10 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private void Awake()
     {
         _camera = Camera.main;
-        gridGenerator = FindObjectOfType<GridGenerator>();
-        audioSource = GetComponent<AudioSource>();
+        _gridGenerator = FindObjectOfType<GridGenerator>();
+       // _uiManager = FindObjectOfType<UIManager>();
+       _remainingItemManager = FindObjectOfType<RemainingItemManager>();
+        _audioSource = GetComponent<AudioSource>();
     }
     void Update()
     {
@@ -36,14 +39,13 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private void DragAndDrop()
     {
         Vector3 v3;
-        
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit? hitObject = CastRay();
             if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<Item>()._isInGrid)
             {
                 _toDrag = hitObject.Value.transform;
-                _distance = hitObject.Value.transform.position.z - _camera.transform.position.z;
+                //float distance = hitObject.Value.transform.position.z - _camera.transform.position.z;
                 _isDragging = true;
             }
             if (_toDrag != null)
@@ -63,15 +65,15 @@ public class InputSystem_DragAndDrop : MonoBehaviour
             //Vector3 cameraToGridDirection = _toDrag.position - _camera.transform.position; //ray direction camera to _toDrag then _toDrag to Grid.
             var toDragObjectDownDirection = Vector3.down;
             Ray rayCastTowardsGrid = new Ray(_toDrag.transform.position, toDragObjectDownDirection);
-            RaycastHit GridHit;
+            RaycastHit gridHit;
             Debug.DrawRay(rayCastTowardsGrid.origin, rayCastTowardsGrid.direction * 100f, Color.yellow);
             
-            if (Physics.Raycast(rayCastTowardsGrid, out GridHit))
+            if (Physics.Raycast(rayCastTowardsGrid, out gridHit))
             {
-                if (GridHit.transform.CompareTag("GridCell"))
+                if (gridHit.transform.CompareTag("GridCell"))
                 {
-                    _newGridPosition = GridHit.transform.position;
-                    //Debug.Log(GridHit.transform.name);
+                    _newGridPosition = gridHit.transform.position;
+                    //Debug.Log(gridHit.transform.name);
                 }
             }
             else
@@ -90,20 +92,32 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         {
             if (_oldPositionOfItem != _newGridPosition && _toDrag != null)
             {
-                for (int i = 0; i < gridGenerator.GridCellObjectsList.Count; i++)   
+                for (int i = 0; i < _gridGenerator.GridCellObjectsList.Count; i++)   
                 {
                     if (gridCellStatusList[i] == false) // false means not occupied
                     {
-                        if (gridGenerator.GridCellObjectsList[i].transform.position == _newGridPosition) // checking if gridCell and RayHit Cell are same.
+                        if (_gridGenerator.GridCellObjectsList[i].transform.position == _newGridPosition) // checking if gridCell and RayHit Cell are same.
                         {
-                            var offsetPosition = new Vector3(0, 0.5f, 0);
+                            var offsetPosition = new Vector3(0, 0.25f, 0);
                             _newGridPosition += offsetPosition; 
                             _toDrag.transform.position = _newGridPosition;
                             
-                            _toDrag.GetComponent<Item>().PlacedInGrid();
+                            Item toDragItem = _toDrag.GetComponent<Item>();
+                            toDragItem.PlacedInGrid();
+                            
                             //invoke an action to add to the dictionary.
-                            ObjectDroppingOnCellAction?.Invoke(_toDrag.GetComponent<Item>());
-                            audioSource.PlayOneShot(objectDragAudioClip);
+                            ObjectDroppingOnCellAction?.Invoke(toDragItem);
+                            _audioSource.PlayOneShot(objectDragAudioClip);
+                           
+                            //updating the UI item Count
+                            /*if (_uiManager != null)
+                            {
+                                _uiManager.RemoveItemFromDictionary(toDragItem);    
+                            }*/
+                            if (_remainingItemManager != null)
+                            {
+                                _remainingItemManager.RemoveItemFromDictionary(toDragItem);    
+                            }
                             _toDrag = null;
                         }
                     }
@@ -111,7 +125,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                     {
                         if (_toDrag !=null)
                         {
-                          //  Debug.Log("Up here");
+                           // Debug.Log("Cell Occupied");
                             _toDrag.transform.position = _oldPositionOfItem;                            
                         }
                     }
@@ -121,13 +135,13 @@ public class InputSystem_DragAndDrop : MonoBehaviour
             {
                 if (_toDrag !=null)
                 {
-                   // Debug.Log("reached old position");
+                   //  Debug.Log("reached old position");
                     _toDrag.transform.DOScale(1f, 0.2f).SetEase(Ease.Linear);
                     _toDrag.transform.DOMove(_oldPositionOfItem,0.2f).SetEase(Ease.OutBack);                            
                 }              
             }
         }
-        gridCellStatusList = gridGenerator.CheckingOccupancyOfCell();
+        gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
     }
     private RaycastHit? CastRay()
     {

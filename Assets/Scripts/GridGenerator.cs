@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
 {
-    private AudioSource audioSource;
-    private InputSystem_DragAndDrop inputSystemDragAndDrop;
+    private AudioSource _audioSource;
+    private InputSystem_DragAndDrop _inputSystemDragAndDrop;
     private UIManager _uiManager;
-    private ParticleSystem mergeParticleSystem;
+    private ParticleSystem _mergeParticleSystem;
     [SerializeField] private AudioClip MergeAudioClip; 
 
     [SerializeField] private GridCellScript gridCellPrefab;
@@ -17,7 +17,7 @@ public class GridGenerator : MonoBehaviour
     private float _cellSize = 1f;
     private float _spaceBetweenCell = 0.1f;
 
-    private Dictionary<string, itemInformation> _itemDictionary;
+    private Dictionary<string, ItemInformation> _itemDictionary;
     private List<GridCellScript> _gridCellObjectsList;
 
     //Giving access to another class by Properties
@@ -29,24 +29,24 @@ public class GridGenerator : MonoBehaviour
     
     void Awake()
     {
-        inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
+        _inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
         _gridCellObjectsList = new List<GridCellScript>(7);
         GenerateGrid();
 
-        _itemDictionary = new Dictionary<string, itemInformation>();
-        audioSource = GetComponent<AudioSource>();
-        mergeParticleSystem = GetComponentInChildren<ParticleSystem>();
+        _itemDictionary = new Dictionary<string, ItemInformation>();
+        _audioSource = GetComponent<AudioSource>();
+        _mergeParticleSystem = GetComponentInChildren<ParticleSystem>();
         _uiManager = FindObjectOfType<UIManager>();
     }
 
     private void OnEnable()
     {
-        inputSystemDragAndDrop.ObjectDroppingOnCellAction += OnDroppingObjectToCEll;
+        _inputSystemDragAndDrop.ObjectDroppingOnCellAction += OnDroppingObjectToCEll;
     }
 
     private void OnDisable()
     {
-        inputSystemDragAndDrop.ObjectDroppingOnCellAction -= OnDroppingObjectToCEll;
+        _inputSystemDragAndDrop.ObjectDroppingOnCellAction -= OnDroppingObjectToCEll;
     }
 
     private void Update()
@@ -55,7 +55,7 @@ public class GridGenerator : MonoBehaviour
     }
     private void GenerateGrid()
     {
-        var name = 0;
+        var number = 0;
         float startX = -(width - 1) / 2f; // Calculate the starting X position
 
 
@@ -68,8 +68,8 @@ public class GridGenerator : MonoBehaviour
                 _gridCellObjectsList.Add(gridCellObject);
             }
             gridCellObject.gameObject.transform.parent = gameObject.transform;
-            gridCellObject.gameObject.name = "Grid Cell " + name;
-            name++;
+            gridCellObject.gameObject.name = "Grid Cell " + number;
+            number++;
         }
         //gameObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
         //gameObject.transform.position = new Vector3(0f, 0.5f, -3.5f);
@@ -89,25 +89,25 @@ public class GridGenerator : MonoBehaviour
 
     void OnDroppingObjectToCEll(Item onCellItem)
     {
-        int _containedObject = 0;
-        if (onCellItem != null && _containedObject <= 7)
+        int containedObject = 0;
+        if (onCellItem != null && containedObject <= 7)
         {
             string itemName = onCellItem.fruitName;
-            //Debug.Log("Fruit Name: " + fruitName);
+            //Debug.Log("Fruit Name: " + itemName);
             if (!_itemDictionary.ContainsKey(itemName))
             {
-                //Debug.Log("No existing "+ fruitName + ", so added one "+ fruitName +" to dictionary");
-                _containedObject ++;
-                itemInformation itemInformation = new itemInformation();
+                //Debug.Log("No existing "+ itemName + ", so added one "+ itemName +" to dictionary");
+                containedObject ++;
+                ItemInformation itemInformation = new ItemInformation();
                 itemInformation.Count = 1;
                 itemInformation.FruitScriptObjects.Add(onCellItem);
                 _itemDictionary.Add(itemName,itemInformation);
             }
             else
             {
-                _containedObject ++;
+                containedObject ++;
                 _itemDictionary[itemName].Count++;
-                //Debug.Log("Found " + fruitName + " in game object list, fruit count: " + fruitData.Count);
+               //Debug.Log("Found " + itemName + " in game object list, fruit count: " + _itemDictionary[itemName].Count);
                 _itemDictionary[itemName].FruitScriptObjects.Add(onCellItem);
             }
             //printDictionary();
@@ -123,9 +123,9 @@ public class GridGenerator : MonoBehaviour
         }
     }
     
-    bool HasThreeSameObject(string FruitName)
+    bool HasThreeSameObject(string fruitName)
     {
-        if (_itemDictionary[FruitName].Count >= 3)
+        if (_itemDictionary[fruitName].Count >= 3)
         {
             //Debug.Log("Three Same Objects");
             //fruitDictionary[FruitName].Count = 0;
@@ -134,32 +134,32 @@ public class GridGenerator : MonoBehaviour
         return false;
     }
     
-    private void MergeObject(List<Item> itemList, string ReceivedName)
+    private void MergeObject(List<Item> itemList, string receivedName)
     {
         //Debug.Log("entered merge method");
-        audioSource.Play();
+        _audioSource.Play();
         foreach (var item in itemList)
         {
             //Debug.Log(fruitDictionary[fruitItem.fruitName].FruitScriptObjects.Count + "   count");
             if (_itemDictionary.ContainsKey(item.fruitName))
             { 
                 //Debug.Log("Contains Key. " + "Received Name: " + ReceivedName);
-                if (_itemDictionary[ReceivedName].Count >= 3)
+                if (_itemDictionary[receivedName].Count >= 3)
                 {
                     //Debug.Log("Count = 3");
                     item.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear).OnComplete((() =>
                     {
-                        mergeParticleSystem.transform.position = Vector3.zero;
-                        audioSource.PlayOneShot(MergeAudioClip);
-                        mergeParticleSystem.Play();
+                        _mergeParticleSystem.transform.position = Vector3.zero;
+                        _audioSource.PlayOneShot(MergeAudioClip);
+                        _mergeParticleSystem.Play();
                     }));
                     item.transform.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
                     {
-                        Transform FruitGameobject = item.transform;
+                        Transform fruitGameobject = item.transform;
                         //Debug.Log("Destroying");
                         _itemDictionary.Remove(item.fruitName);
-                        Destroy(FruitGameobject.gameObject, 0.1f);
-                        _itemDictionary[ReceivedName].Count = 0;
+                        Destroy(fruitGameobject.gameObject, 0.1f);
+                        _itemDictionary[receivedName].Count = 0;
                     }));
                     
                 }
@@ -174,7 +174,7 @@ public class GridGenerator : MonoBehaviour
     }
 
     //for debug purposes
-    void printDictionary()
+    void PrintDictionary()
     {
         foreach (var keyvalue in _itemDictionary)
         {
@@ -193,12 +193,12 @@ public class GridGenerator : MonoBehaviour
 
 // Class for storing the FruitData
 [Serializable]
-public class itemInformation
+public class ItemInformation
 {
     public int Count { get; set; }
     public List<Item> FruitScriptObjects { get; set; }
 
-    public itemInformation() //constructor 
+    public ItemInformation() //constructor 
     {
         Count = 0;
         FruitScriptObjects = new List<Item>();

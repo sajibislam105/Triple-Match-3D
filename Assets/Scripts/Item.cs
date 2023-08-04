@@ -3,35 +3,24 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    private InputSystem_DragAndDrop scallingDown;
-    private UIManager _uiManager;
+    private InputSystem_DragAndDrop _scalingDown;
     [SerializeField] public string fruitName;
     
     public bool _isInGrid;
 
     private void Awake()
     {
-        scallingDown = FindObjectOfType<InputSystem_DragAndDrop>();
-        _uiManager = FindObjectOfType<UIManager>();
+        _scalingDown = FindObjectOfType<InputSystem_DragAndDrop>();
     }
 
     private void OnEnable()
     {
-        scallingDown.ScaleDownObjectAction += OnScaleDowned;
+        _scalingDown.ScaleDownObjectAction += OnScaleDowned;
     }
 
     private void OnDisable()
     {
-        scallingDown.ScaleDownObjectAction -= OnScaleDowned;
-    }
-
-    private void OnDestroy()
-    {
-        // Call the RemoveItemFromDictionary method in the ItemManager script
-        if (_uiManager != null)
-        {
-            _uiManager.RemoveItemFromDictionary(this);
-        }
+        _scalingDown.ScaleDownObjectAction -= OnScaleDowned;
     }
 
     void OnScaleDowned(Transform clickedObject)
@@ -44,6 +33,7 @@ public class Item : MonoBehaviour
     public bool PlacedInGrid()
     {
          _isInGrid = true;
+         //Debug.Log("Is in grid ? "+ _isInGrid);
          return true;
     }
 }

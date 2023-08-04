@@ -11,6 +11,7 @@ public class GridCellScript : MonoBehaviour
         if (other != null)
         {
             occupiedObject = other.GetComponent<Item>();
+            //Debug.Log("Occupied");
             _isOccupied = true;
         }
     }
@@ -19,5 +20,6 @@ public class GridCellScript : MonoBehaviour
     {
         _isOccupied = false;
         //occupiedObject = null;
+        //Debug.Log("Not Occupied");
     }
 }

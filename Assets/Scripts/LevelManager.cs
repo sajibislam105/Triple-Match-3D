@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    private UIManager UIManager;
+    private UIManager _uiManager;
 
     public Action LevelCompleteAction;
     public Action LevelFailedAction;
@@ -20,7 +20,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        UIManager = FindObjectOfType<UIManager>();
+        _uiManager = FindObjectOfType<UIManager>();
     }
 
     void Start()
@@ -30,16 +30,16 @@ public class LevelManager : MonoBehaviour
     
     private void OnEnable()
     {
-        UIManager.PlayNextUIButtonClickedAction += NextLevel;
-        UIManager.RestartUIButtonClickedAction += RestartLevel;
-        UIManager.GamePausedAction += PauseStatus;
+        _uiManager.PlayNextUIButtonClickedAction += NextLevel;
+        _uiManager.RestartUIButtonClickedAction += RestartLevel;
+        _uiManager.GamePausedAction += PauseStatus;
     }
 
     private void OnDisable()
     {
-        UIManager.PlayNextUIButtonClickedAction -= NextLevel;
-        UIManager.RestartUIButtonClickedAction -= RestartLevel;
-        UIManager.GamePausedAction -= PauseStatus;
+        _uiManager.PlayNextUIButtonClickedAction -= NextLevel;
+        _uiManager.RestartUIButtonClickedAction -= RestartLevel;
+        _uiManager.GamePausedAction -= PauseStatus;
     }
     
     void Update()
@@ -53,11 +53,11 @@ public class LevelManager : MonoBehaviour
             {
                 _totalTimeTakenToCompleteLevel = _totalTime - _currentTime;
                 //Debug.Log("Total time taken to complete the level: " + _totalTimeTakenToCompleteLevel
-                float _remainingTime = _totalTime - _totalTimeTakenToCompleteLevel;
-                float _percentRemaining = (_remainingTime / _totalTime) * 100;
+                float remainingTime = _totalTime - _totalTimeTakenToCompleteLevel;
+                float percentRemaining = (remainingTime / _totalTime) * 100;
                 
                 //invoke star sequence
-                StarAchievedAction?.Invoke(_percentRemaining);
+                StarAchievedAction?.Invoke(percentRemaining);
             }
         }
 
