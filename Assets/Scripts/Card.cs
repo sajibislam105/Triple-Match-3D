@@ -10,8 +10,7 @@ public class Card : MonoBehaviour
 
     private void Awake()
     {
-        _rectTransform = GetComponent<RectTransform>(); 
-        _rectTransform.DORotate(new Vector3(0, 360, 0), 5f);
+        _rectTransform = GetComponent<RectTransform>();
     }
     public void SetItemDetails(string itemName, int remainingItemCount)
     {

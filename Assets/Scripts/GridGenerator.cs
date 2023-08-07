@@ -36,6 +36,7 @@ public class GridGenerator : MonoBehaviour
         _itemDictionary = new Dictionary<string, ItemInformation>();
         _audioSource = GetComponent<AudioSource>();
         _mergeParticleSystem = GetComponentInChildren<ParticleSystem>();
+        //Debug.Log(_mergeParticleSystem.gameObject.name);
         _uiManager = FindObjectOfType<UIManager>();
     }
 
@@ -147,13 +148,14 @@ public class GridGenerator : MonoBehaviour
                 if (_itemDictionary[receivedName].Count >= 3)
                 {
                     //Debug.Log("Count = 3");
-                    item.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.Linear).OnComplete((() =>
+                    item.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.OutSine).OnComplete((() =>
                     {
                         _mergeParticleSystem.transform.position = Vector3.zero;
                         _audioSource.PlayOneShot(MergeAudioClip);
                         _mergeParticleSystem.Play();
                     }));
-                    item.transform.DOScale(1f, 0.5f).SetEase(Ease.Linear).OnComplete((() =>
+                    
+                    item.transform.DOScale(1.5f, 0.75f).SetEase(Ease.OutBounce).OnComplete((() =>
                     {
                         Transform fruitGameobject = item.transform;
                         //Debug.Log("Destroying");

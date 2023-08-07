@@ -93,12 +93,19 @@ public class UIManager : MonoBehaviour
         backButton.enabled = false;
     }
 
-    private void ReceivedRemainingTime(string received_time)
+    private void ReceivedRemainingTime(float received_time)
     {
-        TimerText.text = received_time;
+        int minutes = Mathf.FloorToInt(received_time / 60f);
+        int seconds = Mathf.FloorToInt(received_time % 60f);
+        
+        if (received_time < 10f )
+        {
+            TimerText.color = Color.red;
+        }
+        string remainingTimeText= string.Format("{0:00}:{1:00}", minutes, seconds);
+        TimerText.text = remainingTimeText;
     }
-    
-    
+
     public void OnPlayButtonClicked()
     {
         _audioSource.Play();

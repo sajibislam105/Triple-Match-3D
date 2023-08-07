@@ -8,10 +8,10 @@ public class LevelManager : MonoBehaviour
 
     public Action LevelCompleteAction;
     public Action LevelFailedAction;
-    public Action<string> RemainingTimeSendToUIAction;
+    public Action<float> RemainingTimeSendToUIAction;
     public Action<float> StarAchievedAction;
 
-    private float _totalTime = 150.0f; //in seconds
+    private float _totalTime = 60.0f; //in seconds
     private float _currentTime;
     private float _totalTimeTakenToCompleteLevel;
     
@@ -71,11 +71,8 @@ public class LevelManager : MonoBehaviour
     {
         if (_currentTime >= 0)
         {
-            _currentTime -= Time.deltaTime; 
-            int minutes = Mathf.FloorToInt(_currentTime / 60f);
-            int seconds = Mathf.FloorToInt(_currentTime % 60f);
-            string remainingTimeText= string.Format("{0:00}:{1:00}", minutes, seconds);
-            RemainingTimeSendToUIAction?.Invoke(remainingTimeText);
+            _currentTime -= Time.deltaTime;
+            RemainingTimeSendToUIAction?.Invoke(_currentTime);
         }
         else
         {
