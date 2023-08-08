@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 
 public class RemainingItemManager : MonoBehaviour
 {
     [SerializeField]  private GameObject RemainingItemCardSlot;
     [SerializeField] private Transform DesiredParent;
-    
+    [SerializeField] private float DestroyAfterSeconds = 1f;
     Dictionary<string, ItemDataForUI> AllItemData = new Dictionary<string, ItemDataForUI>();
     
     private void Awake()
@@ -18,7 +17,6 @@ public class RemainingItemManager : MonoBehaviour
     {
         // Finding all game objects with the "Item" tag
         GameObject[] gameObjectsWithTag = GameObject.FindGameObjectsWithTag("Item");
-
         // Loop through each item and collect their data
         foreach (GameObject gameObjectWithTag in gameObjectsWithTag)
         {
@@ -48,7 +46,6 @@ public class RemainingItemManager : MonoBehaviour
             }
         }
         GenerateItemCard();
-        
     }
 
     void GenerateItemCard()
@@ -58,59 +55,93 @@ public class RemainingItemManager : MonoBehaviour
             string remainingItemName = KeyValuePair.Key;
             int remainingItemCount = KeyValuePair.Value.itemCounts;
 
-            GameObject itemCard = Instantiate(RemainingItemCardSlot, DesiredParent);
-            Card card = itemCard.GetComponent<Card>();
+            // Checking if a card for this item already exists in the UI
+            Card existingCard = FindCardForItem(remainingItemName);
 
-            card.SetItemDetails(remainingItemName, remainingItemCount);
+            if (existingCard != null)
+            {
+                // Updating the value on the existing card
+                existingCard.SetItemDetails(remainingItemName, remainingItemCount);
+            }
+            else
+            {
+                // Creating a new card
+                GameObject itemCard = Instantiate(RemainingItemCardSlot, DesiredParent);
+                Card card = itemCard.GetComponent<Card>();
+
+                card.SetItemDetails(remainingItemName, remainingItemCount);
+            }
         }
     }
+
+    private Card FindCardForItem(string itemName)
+    {
+        // going through all existing cards and find the one with a matching item name
+        foreach (Transform child in DesiredParent)
+        {
+            Card card = child.GetComponent<Card>();
+
+            if (card != null && card.itemName.text == itemName)
+            {
+                return card;
+            }
+        }
+
+        return null; // No card found for the specified item
+    }
+
     
     public void RemoveItemFromDictionary(Item itemScript)
     {
         string itemName = itemScript.fruitName;
-        //Debug.Log("Item name: "+itemName);
-        
+
         if (AllItemData.ContainsKey(itemName))
         {
             // Decrementing the count
             AllItemData[itemName].itemCounts--;
-            
             // Removing the item script from the list
             AllItemData[itemName].ItemScriptObjects.Remove(itemScript);
 
             int _itemCount = AllItemData[itemName].ItemScriptObjects.Count;
-            //Debug.Log("Item Count:" + _itemCount);
 
-            // If the count reaches 0, remove the fruit name from the dictionary
-            if (AllItemData[itemName].itemCounts <= 0)
+            // If the count reaches 0, remove the fruit name from the dictionary and destroy the card
+            if (_itemCount <= 0)
             {
+                // Finding the card for this item and update its value before destroying
+                Card existingCard = FindCardForItem(itemName);
+                if (existingCard != null)
+                {
+                    existingCard.SetItemDetails(itemName, _itemCount);
+                }
+                
                 AllItemData.Remove(itemName);
+
+                // Finding and destroying the card associated with this item
+                Card cardToRemove = FindCardForItem(itemName);
+                if (cardToRemove != null)
+                {
+                    Destroy(cardToRemove.gameObject,DestroyAfterSeconds);
+                }
+            }
+            else
+            {
+                // Find the card for this item and update its value
+                Card existingCard = FindCardForItem(itemName);
+                if (existingCard != null)
+                {
+                    existingCard.SetItemDetails(itemName, _itemCount);
+                }
             }
         }
-        
-        // Updating the UI after removing/merging the items
-        UpdateCardUI();
-    }
-    
-    private void UpdateCardUI()
-    {
-        // Clearing the full DesiredParent
-        foreach (Transform child in DesiredParent)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        // Regenerating the Card UI based on the updated dictionary so the value of Items Card get updated.
-        GenerateItemCard();
     }
     
      private void PrintDictionary()
     {
-        foreach (var keyvalue in AllItemData)
+        foreach (var keyValuePair in AllItemData)
         {
-            var name = keyvalue.Key;
-            var count = keyvalue.Value.itemCounts;
-            var gameObjects = keyvalue.Value.ItemScriptObjects;
+            var name = keyValuePair.Key;
+            var count = keyValuePair.Value.itemCounts;
+            var gameObjects = keyValuePair.Value.ItemScriptObjects;
             
             //Debug.Log("Object Name: " + name + " Count: "+ count);
             foreach (var listItem in gameObjects)

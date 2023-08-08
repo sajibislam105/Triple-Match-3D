@@ -8,6 +8,10 @@ public class Card : MonoBehaviour
     private RectTransform _rectTransform;
     [SerializeField] private TextMeshProUGUI remainingItemCountText,remainingItemNameText;
 
+    public TextMeshProUGUI itemName
+    {
+        get { return remainingItemNameText; }
+    }
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();

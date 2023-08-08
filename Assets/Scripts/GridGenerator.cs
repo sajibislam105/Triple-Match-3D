@@ -112,10 +112,12 @@ public class GridGenerator : MonoBehaviour
                 _itemDictionary[itemName].FruitScriptObjects.Add(onCellItem);
             }
             //printDictionary();
+            
             if (HasThreeSameObject(itemName))
             {
+                var middleObjectPosition = HasMiddleObject(itemName);
                 //send the list
-                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName);
+                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName, middleObjectPosition);
             }
         }
         else
@@ -135,38 +137,65 @@ public class GridGenerator : MonoBehaviour
         return false;
     }
     
-    private void MergeObject(List<Item> itemList, string receivedName)
+    Vector3 HasMiddleObject(string fruitName)
+    {
+        int count = _itemDictionary[fruitName].Count;
+        
+        if (count >= 2) // If there are two items
+        {
+            int middleIndex = 2; // middle number item is always 2. and Index will be 2-1.
+            Item middleItem = _itemDictionary[fruitName].FruitScriptObjects[middleIndex-1];
+            Vector3 middlePosition = middleItem.transform.position;
+
+            //Debug.Log("Middle object Position: " + middlePosition + " Index number: " + middleIndex);
+            // Do something with the middle position
+            // For example: Debug.Log("Middle position: " + middlePosition);
+            return middlePosition;
+        }
+        else
+        {
+          //  Debug.Log("Zero Returned");
+            return Vector3.zero;    
+        }
+    }
+    
+    
+    private void MergeObject(List<Item> itemList, string receivedName, Vector3 mergePosition)
     {
         //Debug.Log("entered merge method");
         _audioSource.Play();
+        //Debug.Log("merge Position: " + mergePosition + " in merge method.");
         foreach (var item in itemList)
         {
             //Debug.Log(fruitDictionary[fruitItem.fruitName].FruitScriptObjects.Count + "   count");
             if (_itemDictionary.ContainsKey(item.fruitName))
             { 
                 //Debug.Log("Contains Key. " + "Received Name: " + ReceivedName);
-                if (_itemDictionary[receivedName].Count >= 3)
+                if (_itemDictionary[receivedName].Count >= 3 && mergePosition != Vector3.zero)
                 {
+                    //Debug.Log("Merging start");
                     //Debug.Log("Count = 3");
-                    item.transform.DOMove(Vector3.zero, 0.4f).SetEase(Ease.OutSine).OnComplete((() =>
+                    item.transform.DOMoveY(5f, 1f).SetEase(Ease.OutBack).WaitForCompletion();
+                    item.transform.DOMoveX(mergePosition.x, 0.4f).SetEase(Ease.OutSine).OnComplete((() =>
                     {
-                        _mergeParticleSystem.transform.position = Vector3.zero;
+                        _mergeParticleSystem.transform.position = mergePosition; // setting the effect where the merge is happening
                         _audioSource.PlayOneShot(MergeAudioClip);
                         _mergeParticleSystem.Play();
                     }));
                     
                     item.transform.DOScale(1.5f, 0.75f).SetEase(Ease.OutBounce).OnComplete((() =>
                     {
-                        Transform fruitGameobject = item.transform;
+                        Transform fruitGameObject = item.transform;
                         //Debug.Log("Destroying");
                         _itemDictionary.Remove(item.fruitName);
-                        Destroy(fruitGameobject.gameObject, 0.1f);
+                        Destroy(fruitGameObject.gameObject, 0.1f);
                         _itemDictionary[receivedName].Count = 0;
                     }));
                     
                 }
                 else
                 {
+                    //Debug.Log("not Merging");
                     //Debug.Log("Count is not 3, so exiting");
                 }
             }

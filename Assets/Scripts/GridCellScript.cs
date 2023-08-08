@@ -20,7 +20,7 @@ public class GridCellScript : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         _isOccupied = false;
-        //occupiedObject = null;
+        occupiedObject = null;
         //Debug.Log("Not Occupied");
     }
 

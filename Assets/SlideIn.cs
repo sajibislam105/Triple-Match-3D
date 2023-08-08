@@ -10,10 +10,10 @@ public class SlideIn : MonoBehaviour
     void Start()
     {
         _cardsRectTransform = GetComponentsInChildren<Card>();
-        foreach (var rectTransform in _cardsRectTransform)
+        /*foreach (var rectTransform in _cardsRectTransform)
         {
          Debug.Log(rectTransform.gameObject.name);
-        }
+        }*/
 
         for (int i = 0; i < _cardsRectTransform.Length; i++)
         {
