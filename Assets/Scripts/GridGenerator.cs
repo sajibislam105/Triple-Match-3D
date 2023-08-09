@@ -147,15 +147,15 @@ public class GridGenerator : MonoBehaviour
         {
             if (_gridCellObjectsList[i]._isOccupied &&  (_gridCellObjectsList[i].occupiedObject.fruitName == itemName))
             {
-                Debug.Log("Occupied at index: " + i );
+              //  Debug.Log("Occupied at index: " + i );
                 _indexList.Add(i);
             }
             else
             {
-                Debug.Log("not Occupied at index: " + i);
+               // Debug.Log("not Occupied at index: " + i);
             }
         }
-        Debug.Log("index list count: " + _indexList.Count);
+        //Debug.Log("index list count: " + _indexList.Count);
         for (int j = 0; j < _indexList.Count; j++)
         {
             if (j == 1)

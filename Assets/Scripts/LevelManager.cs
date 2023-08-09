@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour
     public Action LevelFailedAction;
     public Action<float> RemainingTimeSendToUIAction;
     public Action<float> StarAchievedAction;
+    public Action SaveLevelAction;
 
     [SerializeField] private float _totalTime = 60.0f; //in seconds
     private float _currentTime;
@@ -50,7 +51,7 @@ public class LevelManager : MonoBehaviour
             LevelCompleteAction?.Invoke();
             _isLevelCompleted = true;
             if (_isLevelCompleted)
-            {
+            {   SaveLevelAction?.Invoke();
                 _totalTimeTakenToCompleteLevel = _totalTime - _currentTime;
                 //Debug.Log("Total time taken to complete the level: " + _totalTimeTakenToCompleteLevel
                 float remainingTime = _totalTime - _totalTimeTakenToCompleteLevel;
