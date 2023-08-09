@@ -272,7 +272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7282744016949600943, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: lengthInSec
-      value: 0.1
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7282744016949600943, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: playOnAwake
@@ -280,7 +280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7282744016949600943, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 0.1
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7282744016949600943, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.b
@@ -322,32 +322,88 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7282744017194909889, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744017194909891, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7282744017194909902, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7282744018021972188, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: lengthInSec
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018021972188, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: playOnAwake
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018021972188, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018021972188, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7282744018021972189, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7282744018021972190, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018223272361, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: lengthInSec
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 7282744018223272361, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: playOnAwake
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018223272361, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018223272361, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018223272363, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7282744018223275606, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7282744018333505378, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: lengthInSec
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018333505378, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7282744018333505378, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018333505378, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7282744018333505381, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018333505383, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7282744018773723620, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
@@ -358,13 +414,37 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7282744018773723623, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018773723641, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7282744018925915378, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7282744018925915379, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: lengthInSec
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018925915379, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: playOnAwake
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018925915379, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018925915379, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282744018925915380, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5875705156280687597, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}

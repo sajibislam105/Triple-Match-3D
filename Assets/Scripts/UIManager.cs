@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,9 +11,10 @@ public class UIManager : MonoBehaviour
     private InputSystem_DragAndDrop _inputSystemDragAndDrop;
     private AudioSource _audioSource;
     private LevelManager _levelManager;
+    private CanvasGroup _canvasGroup;
 
-    [SerializeField]  private GameObject RemainingItemCardSlot;
-    [SerializeField] private Transform DesiredParent;
+    [SerializeField]  private GameObject remainingItemCardSlot;
+    [SerializeField] private Transform desiredParent;
     
     public Action RestartUIButtonClickedAction;
     public Action PlayNextUIButtonClickedAction;
@@ -26,17 +28,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button landingPage;
     [SerializeField] private Button close;
 
-    [SerializeField] private GameObject _LevelComplete;
-    [SerializeField] private GameObject _LevelFailed;
-    [SerializeField] private GameObject _Pausemenu;
+    [SerializeField] private GameObject levelComplete;
+    [SerializeField] private GameObject levelFailed;
+    [SerializeField] private GameObject pauseMenu;
 
-    [SerializeField] private GameObject Star;
-    [SerializeField] private Image _imagestar;
-    [SerializeField] private Image _imagestar1;
-    [SerializeField] private Image _imagestar2;
+    [SerializeField] private GameObject stars;
+    [SerializeField] private GameObject starsPlaceHolder;
+    [SerializeField] private Image imageStar;
+    [SerializeField] private Image imageStar1;
+    [SerializeField] private Image imageStar2;
 
-    [SerializeField] private TextMeshProUGUI itemCountText;
-    [SerializeField] private TextMeshProUGUI itemNameText;
+    [SerializeField] private TextMeshProUGUI instruction;
     
     Dictionary<string, ItemDataForUI> AllItemData = new Dictionary<string, ItemDataForUI>();
     
@@ -48,6 +50,7 @@ public class UIManager : MonoBehaviour
         _levelManager =FindObjectOfType<LevelManager>();
         _inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
         _audioSource = GetComponent<AudioSource>();
+        _canvasGroup = GetComponent<CanvasGroup>();
         //UiITemCount();
     }
     private void OnEnable()
@@ -56,8 +59,10 @@ public class UIManager : MonoBehaviour
         _levelManager.LevelCompleteAction += onLevelComplete;
         _levelManager.LevelFailedAction += onLevelFailed;
         _levelManager.StarAchievedAction += OnstarAchieved;
-        
-       
+
+        _inputSystemDragAndDrop.InstructionStatusAction += OnInstructionStatusCall;
+
+
     }
     private void OnDisable()
     {
@@ -66,28 +71,32 @@ public class UIManager : MonoBehaviour
         _levelManager.LevelFailedAction -= onLevelFailed;
         _levelManager.StarAchievedAction -= OnstarAchieved;
         
-        
+        _inputSystemDragAndDrop.InstructionStatusAction -= OnInstructionStatusCall;
     }
 
     private void Start()
     {
+        imageStar.DOFade(0.1f, 0.1f);
+        imageStar1.DOFade(0.1f, 0.1f);
+        imageStar2.DOFade(0.1f, 0.1f);
         _levelCount = SceneManager.GetActiveScene().buildIndex.ToString();
         LevelText.text = "Level: " + _levelCount;
     }
 
     private void onLevelComplete()
     {
-        _LevelComplete.SetActive(true);
+        levelComplete.SetActive(true);
         LevelText.enabled = false;
         TimerText.enabled = false;
         backButton.enabled = false;
         _inputSystemDragAndDrop.enabled = false;
+        StarAppearingAnimatingFade();
     }
     
-    private void onLevelFailed()
+    public void onLevelFailed()
     {
         _inputSystemDragAndDrop.enabled = false;
-        _LevelFailed.SetActive(true);
+        levelFailed.SetActive(true);
         LevelText.enabled = false;
         TimerText.text = "Time Finished";
         backButton.enabled = false;
@@ -128,7 +137,7 @@ public class UIManager : MonoBehaviour
         //invoke pause
         _isPaused = true;
         GamePausedAction?.Invoke(_isPaused);
-        _Pausemenu.SetActive(true);
+        pauseMenu.SetActive(true);
     }
 
     public void OnPauseMenuPlayButtonClicked()
@@ -140,7 +149,7 @@ public class UIManager : MonoBehaviour
         //invoke pause
         _isPaused = false;
         GamePausedAction?.Invoke(_isPaused);
-        _Pausemenu.SetActive(false);
+        pauseMenu.SetActive(false);
     }
 
     public void OnPauseMenuLandingPageButtonClicked()
@@ -158,7 +167,7 @@ public class UIManager : MonoBehaviour
         //invoke pause
         _isPaused = false;
         GamePausedAction?.Invoke(_isPaused);
-        _Pausemenu.SetActive(false);
+        pauseMenu.SetActive(false);
     }
 
     private void OnstarAchieved(float percentageRemaining)
@@ -166,24 +175,40 @@ public class UIManager : MonoBehaviour
         if (percentageRemaining > 50f)
         {
             //Debug.Log("3 star");
-            _imagestar.enabled = true;
-            _imagestar1.enabled = true;
-            _imagestar2.enabled = true;
+            imageStar.enabled = true;
+            imageStar1.enabled = true;
+            imageStar2.enabled = true;
         }
         else if (percentageRemaining > 25f)
         {
             //Debug.Log("2 star");
-            _imagestar.enabled = true;
-            _imagestar1.enabled = true;
-            _imagestar2.enabled = false;
+            imageStar.enabled = true;
+            imageStar1.enabled = true;
+            imageStar2.enabled = false;
         }
         else
         {
-            Debug.Log("1 star");
-            _imagestar.enabled = true;
-            _imagestar1.enabled = false;
-            _imagestar2.enabled = false;
+            //Debug.Log("1 star");
+            imageStar.enabled = true;
+            imageStar1.enabled = false;
+            imageStar2.enabled = false;
         }
+    }
+
+    private void OnInstructionStatusCall()
+    {
+        instruction.enabled = false;
+    }
+
+    void StarAppearingAnimatingFade()
+    {
+        stars.transform.DOScale(1.2f, 1f).SetEase(Ease.OutSine).WaitForCompletion(); 
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(imageStar.DOFade(1f, 1f));
+        sequence.Append(imageStar1.DOFade(1f, 1f));
+        sequence.Append(imageStar2.DOFade(1f, 1f));
+        stars.transform.DOScale(1f, 2f).SetEase(Ease.InSine).SetDelay(1f);
+        //particle effects
     }
 
 }

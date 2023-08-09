@@ -14,7 +14,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private GridGenerator _gridGenerator;
 
     public Action<Transform> ScaleDownObjectAction;
-    public Action<Item> ObjectDroppingOnCellAction; 
+    public Action<Item> ObjectDroppingOnCellAction;
+    public Action InstructionStatusAction;
 
     private bool _isDragging;
     private Transform _toDrag;
@@ -41,6 +42,8 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         Vector3 v3;
         if (Input.GetMouseButtonDown(0))
         {
+            InstructionStatusAction?.Invoke(); // turning of the instruction
+            
             RaycastHit? hitObject = CastRay();
             if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<Item>()._isInGrid)
             {

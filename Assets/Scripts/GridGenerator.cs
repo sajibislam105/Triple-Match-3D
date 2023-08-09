@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
@@ -118,7 +119,12 @@ public class GridGenerator : MonoBehaviour
                 var middleObjectPosition = HasMiddleObject(itemName);
                 //send the list
                 MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName, middleObjectPosition);
+                
             }
+            /*if (containedObject == 7)
+            {
+                _uiManager.onLevelFailed();
+            }*/
         }
         else
         {
@@ -128,7 +134,7 @@ public class GridGenerator : MonoBehaviour
     
     bool HasThreeSameObject(string fruitName)
     {
-        if (_itemDictionary[fruitName].Count >= 3)
+        if (_itemDictionary[fruitName].Count == 3)
         {
             //Debug.Log("Three Same Objects");
             //fruitDictionary[FruitName].Count = 0;
@@ -139,24 +145,71 @@ public class GridGenerator : MonoBehaviour
     
     Vector3 HasMiddleObject(string fruitName)
     {
+        /*List<int> indexNumber = new List<int>();
+        int count = 0;
+        for (int i = 0; i < _gridCellObjectsList.Count; i++)
+        {
+            if (_gridCellObjectsList[i]._isOccupied)
+            {
+                count++;
+                Debug.Log(count);
+                indexNumber.Add(_gridCellObjectsList.IndexOf(_gridCellObjectsList[i]));
+            }   
+        }
+
+        foreach (var VARIABLE in indexNumber)
+        {
+            Debug.Log("Index Number: " + VARIABLE);
+        }*/
+        
+        
         int count = _itemDictionary[fruitName].Count;
         
-        if (count >= 2) // If there are two items
+        if (count >= 3) // If there are three items
         {
-            int middleIndex = 2; // middle number item is always 2. and Index will be 2-1.
-            Item middleItem = _itemDictionary[fruitName].FruitScriptObjects[middleIndex-1];
+            int middleIndex = 1; // Middle item is the one at index 2 (0-based indexing)
+            Item middleItem = _itemDictionary[fruitName].FruitScriptObjects[middleIndex];
             Vector3 middlePosition = middleItem.transform.position;
+            //Vector3 middlePosition = Vector3.zero;
 
+            /*Item FirstItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex-1];
+            //Debug.Log(FirstItemOnGrid.gameObject.name + " 1 ");
+            Item ThirdItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex+1];
+            //Debug.Log(ThirdItemOnGrid.gameObject.name+ " 3 ");
+
+            float AB = Vector3.Distance(FirstItemOnGrid.transform.position, middleItem.transform.position); //first to middle
+            float AC = Vector3.Distance(FirstItemOnGrid.transform.position, ThirdItemOnGrid.transform.position); // first to third
+            float BC = Vector3.Distance(middleItem.transform.position, ThirdItemOnGrid.transform.position); // middle to third
+            
+            /*
+            If (AB < AC) and (AB < BC), then position A is in the middle.
+            If (AC < AB) and (AC < BC), then position C is in the middle.
+            If (BC < AB) and (BC < AC), then position B is in the middle.
+            #1#
+            
+            if ( (AB < AC) && (AB <BC ))
+            {
+                middlePosition = FirstItemOnGrid.transform.position;
+            }
+
+            if ( (AC < AB) && (AC <BC ))
+            {
+                middlePosition = ThirdItemOnGrid.transform.position;
+            }
+
+            if ( (BC < AB) && (BC <AC ))
+            {
+                middlePosition = middleItem.transform.position;
+            }
             //Debug.Log("Middle object Position: " + middlePosition + " Index number: " + middleIndex);
-            // Do something with the middle position
-            // For example: Debug.Log("Middle position: " + middlePosition);
+            */
             return middlePosition;
         }
         else
         {
           //  Debug.Log("Zero Returned");
-            return Vector3.zero;    
-        }
+            return Vector3.zero;   
+        }            
     }
     
     
@@ -175,23 +228,25 @@ public class GridGenerator : MonoBehaviour
                 {
                     //Debug.Log("Merging start");
                     //Debug.Log("Count = 3");
-                    item.transform.DOMoveY(5f, 1f).SetEase(Ease.OutBack).WaitForCompletion();
-                    item.transform.DOMoveX(mergePosition.x, 0.4f).SetEase(Ease.OutSine).OnComplete((() =>
+
+                    item.transform.DOMoveX(mergePosition.x, 0.75f).SetEase(Ease.InExpo).OnComplete((() =>
                     {
                         _mergeParticleSystem.transform.position = mergePosition; // setting the effect where the merge is happening
                         _audioSource.PlayOneShot(MergeAudioClip);
                         _mergeParticleSystem.Play();
+                        item.transform.DOMoveY(2f, 1f).SetEase(Ease.Linear).WaitForCompletion();
+                        item.transform.DOScale(0.75f, 0.75f).SetEase(Ease.Linear).OnComplete((() =>
+                        {
+                             item.transform.DOScale(0f, 0.1f).SetEase(Ease.OutBounce).OnComplete((() =>
+                             {
+                                 Transform fruitGameObject = item.transform;
+                                 //Debug.Log("Destroying");
+                                 _itemDictionary.Remove(item.fruitName);
+                                 Destroy(fruitGameObject.gameObject, 0.1f);
+                                 _itemDictionary[receivedName].Count = 0;
+                             }));
+                        }));    
                     }));
-                    
-                    item.transform.DOScale(1.5f, 0.75f).SetEase(Ease.OutBounce).OnComplete((() =>
-                    {
-                        Transform fruitGameObject = item.transform;
-                        //Debug.Log("Destroying");
-                        _itemDictionary.Remove(item.fruitName);
-                        Destroy(fruitGameObject.gameObject, 0.1f);
-                        _itemDictionary[receivedName].Count = 0;
-                    }));
-                    
                 }
                 else
                 {
@@ -200,8 +255,6 @@ public class GridGenerator : MonoBehaviour
                 }
             }
         }
-       
-        
     }
 
     //for debug purposes
