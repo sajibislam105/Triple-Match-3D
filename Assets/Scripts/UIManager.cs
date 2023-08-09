@@ -202,12 +202,12 @@ public class UIManager : MonoBehaviour
 
     void StarAppearingAnimatingFade()
     {
-        stars.transform.DOScale(1.2f, 1f).SetEase(Ease.OutSine).WaitForCompletion(); 
+        stars.transform.DOScale(1.2f, 0.5f).SetEase(Ease.OutSine).WaitForCompletion(); 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(imageStar.DOFade(1f, 1f));
-        sequence.Append(imageStar1.DOFade(1f, 1f));
-        sequence.Append(imageStar2.DOFade(1f, 1f));
-        stars.transform.DOScale(1f, 2f).SetEase(Ease.InSine).SetDelay(1f);
+        sequence.Append(imageStar.DOFade(1f, 0.5f));
+        sequence.Append(imageStar1.DOFade(1f, 0.5f));
+        sequence.Append(imageStar2.DOFade(1f, 0.5f));
+        stars.transform.DOScale(1f, 1.25f).SetEase(Ease.InSine).SetDelay(0.5f);
         //particle effects
     }
 

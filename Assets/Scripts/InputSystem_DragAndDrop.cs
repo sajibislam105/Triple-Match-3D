@@ -39,6 +39,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     
     private void DragAndDrop()
     {
+        gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
         Vector3 v3;
         if (Input.GetMouseButtonDown(0))
         {
@@ -107,16 +108,10 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                             
                             Item toDragItem = _toDrag.GetComponent<Item>();
                             toDragItem.PlacedInGrid();
-                            
                             //invoke an action to add to the dictionary.
                             ObjectDroppingOnCellAction?.Invoke(toDragItem);
                             _audioSource.PlayOneShot(objectDragAudioClip);
-                           
-                            //updating the UI item Count
-                            /*if (_uiManager != null)
-                            {
-                                _uiManager.RemoveItemFromDictionary(toDragItem);    
-                            }*/
+                            
                             if (_remainingItemManager != null)
                             {
                                 _remainingItemManager.RemoveItemFromDictionary(toDragItem);    
@@ -144,7 +139,6 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                 }              
             }
         }
-        gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
     }
     private RaycastHit? CastRay()
     {

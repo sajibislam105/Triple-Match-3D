@@ -14,12 +14,15 @@ public class GridGenerator : MonoBehaviour
 
     [SerializeField] private GridCellScript gridCellPrefab;
     [SerializeField] private int width;
+    private Vector3 middlePosition;
     
     private float _cellSize = 1f;
     private float _spaceBetweenCell = 0.1f;
 
     private Dictionary<string, ItemInformation> _itemDictionary;
     private List<GridCellScript> _gridCellObjectsList;
+    [SerializeField]private List<int> _indexList;
+    private Vector3 _middleObjectPosition;
 
     //Giving access to another class by Properties
     public List<GridCellScript> GridCellObjectsList
@@ -113,18 +116,12 @@ public class GridGenerator : MonoBehaviour
                 _itemDictionary[itemName].FruitScriptObjects.Add(onCellItem);
             }
             //printDictionary();
-            
             if (HasThreeSameObject(itemName))
             {
-                var middleObjectPosition = HasMiddleObject(itemName);
                 //send the list
-                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName, middleObjectPosition);
-                
+                _middleObjectPosition = GetMiddleObject(itemName);
+                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName, _middleObjectPosition);
             }
-            /*if (containedObject == 7)
-            {
-                _uiManager.onLevelFailed();
-            }*/
         }
         else
         {
@@ -132,9 +129,9 @@ public class GridGenerator : MonoBehaviour
         }
     }
     
-    bool HasThreeSameObject(string fruitName)
+    bool HasThreeSameObject(string itemName)
     {
-        if (_itemDictionary[fruitName].Count == 3)
+        if (_itemDictionary[itemName].Count <= 3)
         {
             //Debug.Log("Three Same Objects");
             //fruitDictionary[FruitName].Count = 0;
@@ -143,73 +140,83 @@ public class GridGenerator : MonoBehaviour
         return false;
     }
     
-    Vector3 HasMiddleObject(string fruitName)
+    public Vector3 GetMiddleObject(string itemName)
     {
-        /*List<int> indexNumber = new List<int>();
-        int count = 0;
-        for (int i = 0; i < _gridCellObjectsList.Count; i++)
+         _indexList = new List<int>();
+        for (int i = 0; i < 7; i++) //grid list count 7
         {
-            if (_gridCellObjectsList[i]._isOccupied)
+            if (_gridCellObjectsList[i]._isOccupied &&  (_gridCellObjectsList[i].occupiedObject.fruitName == itemName))
             {
-                count++;
-                Debug.Log(count);
-                indexNumber.Add(_gridCellObjectsList.IndexOf(_gridCellObjectsList[i]));
-            }   
+                Debug.Log("Occupied at index: " + i );
+                _indexList.Add(i);
+            }
+            else
+            {
+                Debug.Log("not Occupied at index: " + i);
+            }
+        }
+        Debug.Log("index list count: " + _indexList.Count);
+        for (int j = 0; j < _indexList.Count; j++)
+        {
+            if (j == 1)
+            {
+               // Debug.Log("Reached here");
+                Item middleItem = _itemDictionary[itemName].FruitScriptObjects[j];
+                Vector3 middlePosition = middleItem.transform.position;
+                return middlePosition;
+            }
         }
 
-        foreach (var VARIABLE in indexNumber)
-        {
-            Debug.Log("Index Number: " + VARIABLE);
-        }*/
-        
-        
-        int count = _itemDictionary[fruitName].Count;
+        return Vector3.zero;
+        /*int count = _itemDictionary[fruitName].Count;
         
         if (count >= 3) // If there are three items
         {
             int middleIndex = 1; // Middle item is the one at index 2 (0-based indexing)
             Item middleItem = _itemDictionary[fruitName].FruitScriptObjects[middleIndex];
-            Vector3 middlePosition = middleItem.transform.position;
-            //Vector3 middlePosition = Vector3.zero;
+            //Vector3 middlePosition = middleItem.transform.position;
+           // Vector3 middlePosition = Vector3.zero;
 
-            /*Item FirstItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex-1];
+            Item FirstItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex-1];
             //Debug.Log(FirstItemOnGrid.gameObject.name + " 1 ");
             Item ThirdItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex+1];
             //Debug.Log(ThirdItemOnGrid.gameObject.name+ " 3 ");
 
             float AB = Vector3.Distance(FirstItemOnGrid.transform.position, middleItem.transform.position); //first to middle
-            float AC = Vector3.Distance(FirstItemOnGrid.transform.position, ThirdItemOnGrid.transform.position); // first to third
             float BC = Vector3.Distance(middleItem.transform.position, ThirdItemOnGrid.transform.position); // middle to third
-            
+            float AC = Vector3.Distance(FirstItemOnGrid.transform.position, ThirdItemOnGrid.transform.position); // first to third
+
+
             /*
             If (AB < AC) and (AB < BC), then position A is in the middle.
-            If (AC < AB) and (AC < BC), then position C is in the middle.
             If (BC < AB) and (BC < AC), then position B is in the middle.
-            #1#
+            If (AC < AB) and (AC < BC), then position C is in the middle.
             
+            #1#
             if ( (AB < AC) && (AB <BC ))
             {
-                middlePosition = FirstItemOnGrid.transform.position;
+              middlePosition = FirstItemOnGrid.transform.position;
+              return middlePosition;
             }
-
-            if ( (AC < AB) && (AC <BC ))
-            {
-                middlePosition = ThirdItemOnGrid.transform.position;
-            }
-
-            if ( (BC < AB) && (BC <AC ))
+            else if ( (BC < AB) && (BC <AC ))
             {
                 middlePosition = middleItem.transform.position;
+                return middlePosition;
             }
+            else if( (AC < AB) && (AC <BC ))
+            {
+                middlePosition = ThirdItemOnGrid.transform.position;
+                return middlePosition;
+            }
+            else
+            {
+                //equal
+                return middleItem.transform.position;
+            }
+
             //Debug.Log("Middle object Position: " + middlePosition + " Index number: " + middleIndex);
-            */
-            return middlePosition;
-        }
-        else
-        {
-          //  Debug.Log("Zero Returned");
-            return Vector3.zero;   
-        }            
+            //return middlePosition;
+        }*/
     }
     
     
@@ -257,7 +264,7 @@ public class GridGenerator : MonoBehaviour
         }
     }
 
-    //for debug purposes
+    //for debug purpose
     void PrintDictionary()
     {
         foreach (var keyvalue in _itemDictionary)

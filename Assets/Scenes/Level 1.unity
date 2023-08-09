@@ -617,7 +617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 353701731784747693, guid: 849e3c75fdb698f4c8952ff04b695b88, type: 3}
       propertyPath: _totalTime
-      value: 15
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6051416806238495262, guid: 849e3c75fdb698f4c8952ff04b695b88, type: 3}
       propertyPath: m_Name
@@ -636,6 +636,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1959171257770889183, guid: 906b4287ef9527b459208672216f1ebd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959171257770889183, guid: 906b4287ef9527b459208672216f1ebd, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959171257770889183, guid: 906b4287ef9527b459208672216f1ebd, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959171257770889183, guid: 906b4287ef9527b459208672216f1ebd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2012067850525656018, guid: 906b4287ef9527b459208672216f1ebd, type: 3}
       propertyPath: m_Name
       value: Canvas

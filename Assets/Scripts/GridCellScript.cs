@@ -1,11 +1,9 @@
-using System;
 using UnityEngine;
 
 public class GridCellScript : MonoBehaviour
 {
     public bool _isOccupied;
-    public Item occupiedObject; // cause I need the fruit script mono behaviour not the whole game object 
-    private Transform hitObject;
+    public Item occupiedObject; // cause I need the fruit script mono behaviour not the whole game object
 
     private void OnTriggerEnter(Collider other)
     {
