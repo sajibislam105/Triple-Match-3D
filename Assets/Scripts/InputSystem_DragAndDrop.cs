@@ -23,7 +23,9 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private Vector3 _oldPositionOfItem;
     
     [SerializeField] private List<bool> gridCellStatusList = new List<bool>();
-    
+
+    public List<bool> GridCellStatusList => gridCellStatusList;
+
     private void Awake()
     {
         _camera = Camera.main;
@@ -109,7 +111,10 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                             Item toDragItem = _toDrag.GetComponent<Item>();
                             toDragItem.PlacedInGrid();
                             //invoke an action to add to the dictionary.
+                            Debug.Log("ObjectDroppingOnCellAction Invoke");
+                            
                             ObjectDroppingOnCellAction?.Invoke(toDragItem);
+                            
                             _audioSource.PlayOneShot(objectDragAudioClip);
                             
                             if (_remainingItemManager != null)
@@ -139,6 +144,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                 }              
             }
         }
+        
     }
     private RaycastHit? CastRay()
     {

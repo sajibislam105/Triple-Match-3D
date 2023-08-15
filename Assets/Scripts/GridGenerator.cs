@@ -23,6 +23,7 @@ public class GridGenerator : MonoBehaviour
     private List<GridCellScript> _gridCellObjectsList;
     [SerializeField]private List<int> _indexList;
     private Vector3 _middleObjectPosition;
+    private string _currentItem;
 
     //Giving access to another class by Properties
     public List<GridCellScript> GridCellObjectsList
@@ -94,6 +95,14 @@ public class GridGenerator : MonoBehaviour
 
     void OnDroppingObjectToCEll(Item onCellItem)
     {
+        Debug.Log("Listening to OnDroppingObjectToCEll");
+        Debug.Log("Grid Cell status list is the following now");
+        for (var i = 0; i < _inputSystemDragAndDrop.GridCellStatusList.Count; i++)
+        {
+            var gridCellStatus = _inputSystemDragAndDrop.GridCellStatusList[i];
+            Debug.Log($"grid cell status of {i} is {gridCellStatus}");
+        }
+
         int containedObject = 0;
         if (onCellItem != null && containedObject <= 7)
         {
@@ -119,16 +128,25 @@ public class GridGenerator : MonoBehaviour
             if (HasThreeSameObject(itemName))
             {
                 //send the list
-                _middleObjectPosition = GetMiddleObject(itemName);
-                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName, _middleObjectPosition);
+                _currentItem = itemName;
+                Invoke(nameof(FoundThreeSamePostProcess), 0.1f);
             }
         }
         else
         {
             //Debug.Log("More than 7 object. No FruitScript found.");
         }
+        
+        GetMiddleObject(onCellItem.fruitName);
+        
     }
-    
+
+    private void FoundThreeSamePostProcess()
+    {
+        _middleObjectPosition = GetMiddleObject(_currentItem);
+        MergeObject(_itemDictionary[_currentItem].FruitScriptObjects, _currentItem, _middleObjectPosition);
+    }
+
     bool HasThreeSameObject(string itemName)
     {
         if (_itemDictionary[itemName].Count <= 3)
@@ -155,13 +173,15 @@ public class GridGenerator : MonoBehaviour
                // Debug.Log("not Occupied at index: " + i);
             }
         }
+
+        // return _gridCellObjectsList[_indexList[1]].transform.position;
         //Debug.Log("index list count: " + _indexList.Count);
         for (int j = 0; j < _indexList.Count; j++)
         {
             if (j == 1)
             {
                // Debug.Log("Reached here");
-                Item middleItem = _itemDictionary[itemName].FruitScriptObjects[j];
+                var middleItem = _gridCellObjectsList[_indexList[j]];
                 Vector3 middlePosition = middleItem.transform.position;
                 return middlePosition;
             }
