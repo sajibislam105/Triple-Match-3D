@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
 {
-    private AudioSource _audioSource;
+    public Action<List<Item>, string, Vector3> MergeAction;
     private InputSystem_DragAndDrop _inputSystemDragAndDrop;
-    private UIManager _uiManager;
-    private ParticleSystem _mergeParticleSystem;
-    [SerializeField] private AudioClip MergeAudioClip; 
+    private IMergeAble iMergeAble;
 
     [SerializeField] private GridCellScript gridCellPrefab;
     [SerializeField] private int width;
@@ -23,25 +20,24 @@ public class GridGenerator : MonoBehaviour
     private List<GridCellScript> _gridCellObjectsList;
     [SerializeField]private List<int> _indexList;
     private Vector3 _middleObjectPosition;
+    private string _currentItem;
 
     //Giving access to another class by Properties
-    public List<GridCellScript> GridCellObjectsList
+    public List<GridCellScript> GridCellObjectsList => _gridCellObjectsList;
+
+    public Dictionary<string, ItemInformation> ItemDictionary
     {
-        get {return _gridCellObjectsList;}
+        get { return _itemDictionary; }
+        set { _itemDictionary = value; }
     }
 
-    
     void Awake()
     {
+        iMergeAble = GetComponent<IMergeAble>();
         _inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
         _gridCellObjectsList = new List<GridCellScript>(7);
         GenerateGrid();
-
         _itemDictionary = new Dictionary<string, ItemInformation>();
-        _audioSource = GetComponent<AudioSource>();
-        _mergeParticleSystem = GetComponentInChildren<ParticleSystem>();
-        //Debug.Log(_mergeParticleSystem.gameObject.name);
-        _uiManager = FindObjectOfType<UIManager>();
     }
 
     private void OnEnable()
@@ -62,8 +58,6 @@ public class GridGenerator : MonoBehaviour
     {
         var number = 0;
         float startX = -(width - 1) / 2f; // Calculate the starting X position
-
-
         for (int x = 0; x < width; x++)
         {
             Vector3 worldPosition = new Vector3( (startX + x ) *( _cellSize + _spaceBetweenCell), 0,  gameObject.transform.position.z);
@@ -76,8 +70,6 @@ public class GridGenerator : MonoBehaviour
             gridCellObject.gameObject.name = "Grid Cell " + number;
             number++;
         }
-        //gameObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
-        //gameObject.transform.position = new Vector3(0f, 0.5f, -3.5f);
         transform.Translate(transform.position.x,transform.position.y,0);
         transform.DOScale(0.6f, 0.01f).SetEase(Ease.Linear);
     }
@@ -94,6 +86,11 @@ public class GridGenerator : MonoBehaviour
 
     void OnDroppingObjectToCEll(Item onCellItem)
     {
+        for (var i = 0; i < _inputSystemDragAndDrop.GridCellStatusList.Count; i++)
+        {
+            var gridCellStatus = _inputSystemDragAndDrop.GridCellStatusList[i];
+            //Debug.Log($"grid cell status of {i} is {gridCellStatus}");
+        }
         int containedObject = 0;
         if (onCellItem != null && containedObject <= 7)
         {
@@ -112,42 +109,50 @@ public class GridGenerator : MonoBehaviour
             {
                 containedObject ++;
                 _itemDictionary[itemName].Count++;
-               //Debug.Log("Found " + itemName + " in game object list, fruit count: " + _itemDictionary[itemName].Count);
+                //Debug.Log("Found " + itemName + " in game object list, fruit count: " + _itemDictionary[itemName].Count);
                 _itemDictionary[itemName].FruitScriptObjects.Add(onCellItem);
             }
-            //printDictionary();
+            
+            //Till here occupancy status updated. Now Update Index List of occupied cells
             if (HasThreeSameObject(itemName))
             {
                 //send the list
-                _middleObjectPosition = GetMiddleObject(itemName);
-                MergeObject(_itemDictionary[itemName].FruitScriptObjects,itemName, _middleObjectPosition);
+                //MergeAction?.Invoke(_itemDictionary[itemName].FruitScriptObjects,itemName, _middleObjectPosition);
+                _currentItem = itemName;
+                Invoke(nameof(FoundThreeSamePostProcess),0.1f);
+                
             }
         }
         else
         {
             //Debug.Log("More than 7 object. No FruitScript found.");
         }
+        _middleObjectPosition = GetMiddleObject(onCellItem.fruitName);
+    }
+    private void FoundThreeSamePostProcess()
+    {
+        _middleObjectPosition = GetMiddleObject(_currentItem);
+        iMergeAble.Merge(_itemDictionary[_currentItem].FruitScriptObjects,_currentItem, _middleObjectPosition);
     }
     
     bool HasThreeSameObject(string itemName)
     {
-        if (_itemDictionary[itemName].Count <= 3)
+        if (_itemDictionary[itemName].Count == 3)
         {
             //Debug.Log("Three Same Objects");
-            //fruitDictionary[FruitName].Count = 0;
             return true;
         }
         return false;
     }
     
-    public Vector3 GetMiddleObject(string itemName)
+    private Vector3 GetMiddleObject(string itemName)
     {
-         _indexList = new List<int>();
+        _indexList = new List<int>();
         for (int i = 0; i < 7; i++) //grid list count 7
         {
             if (_gridCellObjectsList[i]._isOccupied &&  (_gridCellObjectsList[i].occupiedObject.fruitName == itemName))
             {
-              //  Debug.Log("Occupied at index: " + i );
+                //Debug.Log("Occupied at index: " + i );
                 _indexList.Add(i);
             }
             else
@@ -155,123 +160,26 @@ public class GridGenerator : MonoBehaviour
                // Debug.Log("not Occupied at index: " + i);
             }
         }
-        //Debug.Log("index list count: " + _indexList.Count);
         for (int j = 0; j < _indexList.Count; j++)
         {
             if (j == 1)
             {
-               // Debug.Log("Reached here");
-                Item middleItem = _itemDictionary[itemName].FruitScriptObjects[j];
+               var middleItem = _gridCellObjectsList[_indexList[j]];
                 Vector3 middlePosition = middleItem.transform.position;
                 return middlePosition;
             }
         }
-
         return Vector3.zero;
-        /*int count = _itemDictionary[fruitName].Count;
-        
-        if (count >= 3) // If there are three items
-        {
-            int middleIndex = 1; // Middle item is the one at index 2 (0-based indexing)
-            Item middleItem = _itemDictionary[fruitName].FruitScriptObjects[middleIndex];
-            //Vector3 middlePosition = middleItem.transform.position;
-           // Vector3 middlePosition = Vector3.zero;
-
-            Item FirstItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex-1];
-            //Debug.Log(FirstItemOnGrid.gameObject.name + " 1 ");
-            Item ThirdItemOnGrid = _itemDictionary[fruitName].FruitScriptObjects[middleIndex+1];
-            //Debug.Log(ThirdItemOnGrid.gameObject.name+ " 3 ");
-
-            float AB = Vector3.Distance(FirstItemOnGrid.transform.position, middleItem.transform.position); //first to middle
-            float BC = Vector3.Distance(middleItem.transform.position, ThirdItemOnGrid.transform.position); // middle to third
-            float AC = Vector3.Distance(FirstItemOnGrid.transform.position, ThirdItemOnGrid.transform.position); // first to third
-
-
-            /*
-            If (AB < AC) and (AB < BC), then position A is in the middle.
-            If (BC < AB) and (BC < AC), then position B is in the middle.
-            If (AC < AB) and (AC < BC), then position C is in the middle.
-            
-            #1#
-            if ( (AB < AC) && (AB <BC ))
-            {
-              middlePosition = FirstItemOnGrid.transform.position;
-              return middlePosition;
-            }
-            else if ( (BC < AB) && (BC <AC ))
-            {
-                middlePosition = middleItem.transform.position;
-                return middlePosition;
-            }
-            else if( (AC < AB) && (AC <BC ))
-            {
-                middlePosition = ThirdItemOnGrid.transform.position;
-                return middlePosition;
-            }
-            else
-            {
-                //equal
-                return middleItem.transform.position;
-            }
-
-            //Debug.Log("Middle object Position: " + middlePosition + " Index number: " + middleIndex);
-            //return middlePosition;
-        }*/
-    }
-    
-    
-    private void MergeObject(List<Item> itemList, string receivedName, Vector3 mergePosition)
-    {
-        //Debug.Log("entered merge method");
-        _audioSource.Play();
-        //Debug.Log("merge Position: " + mergePosition + " in merge method.");
-        foreach (var item in itemList)
-        {
-            //Debug.Log(fruitDictionary[fruitItem.fruitName].FruitScriptObjects.Count + "   count");
-            if (_itemDictionary.ContainsKey(item.fruitName))
-            { 
-                //Debug.Log("Contains Key. " + "Received Name: " + ReceivedName);
-                if (_itemDictionary[receivedName].Count >= 3 && mergePosition != Vector3.zero)
-                {
-                    //Debug.Log("Merging start");
-                    //Debug.Log("Count = 3");
-
-                    item.transform.DOMoveX(mergePosition.x, 0.75f).SetEase(Ease.InExpo).OnComplete((() =>
-                    {
-                        _mergeParticleSystem.transform.position = mergePosition; // setting the effect where the merge is happening
-                        _audioSource.PlayOneShot(MergeAudioClip);
-                        _mergeParticleSystem.Play();
-                        item.transform.DOMoveY(2f, 1f).SetEase(Ease.Linear).WaitForCompletion();
-                        item.transform.DOScale(0.75f, 0.75f).SetEase(Ease.Linear).OnComplete((() =>
-                        {
-                             item.transform.DOScale(0f, 0.1f).SetEase(Ease.OutBounce).OnComplete((() =>
-                             {
-                                 Transform fruitGameObject = item.transform;
-                                 //Debug.Log("Destroying");
-                                 _itemDictionary.Remove(item.fruitName);
-                                 Destroy(fruitGameObject.gameObject, 0.1f);
-                                 _itemDictionary[receivedName].Count = 0;
-                             }));
-                        }));    
-                    }));
-                }
-                else
-                {
-                    //Debug.Log("not Merging");
-                    //Debug.Log("Count is not 3, so exiting");
-                }
-            }
-        }
     }
 
     //for debug purpose
     void PrintDictionary()
     {
-        foreach (var keyvalue in _itemDictionary)
+        foreach (var keyValue in _itemDictionary)
         {
-            var name = keyvalue.Key;
-            var count = keyvalue.Value.Count;
-            var gameObjects = keyvalue.Value.FruitScriptObjects;
+            var name = keyValue.Key;
+            var count = keyValue.Value.Count;
+            var gameObjects = keyValue.Value.FruitScriptObjects;
             
             //Debug.Log("Object Name: " + name + " Count: "+ count);
             foreach (var listItem in gameObjects)
@@ -282,8 +190,7 @@ public class GridGenerator : MonoBehaviour
     }
 }
 
-// Class for storing the FruitData
-[Serializable]
+// Class for storing the ItemData
 public class ItemInformation
 {
     public int Count { get; set; }

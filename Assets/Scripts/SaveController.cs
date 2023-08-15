@@ -28,6 +28,6 @@ public class SaveController : MonoBehaviour
         //PlayerPrefs.SetString("LevelSaved",activeLevel);
         PlayerPrefs.SetInt(activeLevel,currentSceneIndex);
         
-        Debug.Log(activeLevel);
+        //Debug.Log(activeLevel);
     }
 }

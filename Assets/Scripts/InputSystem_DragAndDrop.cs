@@ -7,7 +7,6 @@ public class InputSystem_DragAndDrop : MonoBehaviour
 {
     private Camera _camera;
     private AudioSource _audioSource;
-    //private UIManager _uiManager;
     private RemainingItemManager _remainingItemManager;
     [SerializeField] private AudioClip objectDragAudioClip;
     
@@ -23,13 +22,13 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     private Vector3 _oldPositionOfItem;
     
     [SerializeField] private List<bool> gridCellStatusList = new List<bool>();
-    
+    public List<bool> GridCellStatusList => gridCellStatusList;
+
     private void Awake()
     {
         _camera = Camera.main;
         _gridGenerator = FindObjectOfType<GridGenerator>();
-       // _uiManager = FindObjectOfType<UIManager>();
-       _remainingItemManager = FindObjectOfType<RemainingItemManager>();
+        _remainingItemManager = FindObjectOfType<RemainingItemManager>();
         _audioSource = GetComponent<AudioSource>();
     }
     void Update()
@@ -56,7 +55,6 @@ public class InputSystem_DragAndDrop : MonoBehaviour
             {
                 _oldPositionOfItem = _toDrag.transform.position; //current position of object    
             }
-            
         }
 
         if (Input.GetMouseButton(0) && _isDragging)
@@ -110,6 +108,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                             toDragItem.PlacedInGrid();
                             //invoke an action to add to the dictionary.
                             ObjectDroppingOnCellAction?.Invoke(toDragItem);
+                            
                             _audioSource.PlayOneShot(objectDragAudioClip);
                             
                             if (_remainingItemManager != null)
@@ -139,6 +138,7 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                 }              
             }
         }
+        gridCellStatusList = _gridGenerator.CheckingOccupancyOfCell();
     }
     private RaycastHit? CastRay()
     {

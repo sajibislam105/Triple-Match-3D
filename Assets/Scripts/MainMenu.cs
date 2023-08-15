@@ -6,10 +6,7 @@ public class MainMenu : MonoBehaviour
 {
     private AudioSource _audioSource;
     
-   // [SerializeField] private Button playButton;
-   // [SerializeField] private Button quitButton;
-   // [SerializeField] private Button PlayAgainButton;
-   [SerializeField] private TextMeshProUGUI LevelNumber;
+    [SerializeField] private TextMeshProUGUI LevelNumber;
 
     private void Start()
     {
@@ -22,7 +19,6 @@ public class MainMenu : MonoBehaviour
         {
             LevelNumber.text = "1";
         }
-        
     }
 
     public void PlayGame()
