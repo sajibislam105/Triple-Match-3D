@@ -5,13 +5,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Zenject;
 
 public class UIManager : MonoBehaviour
 {
-    private InputSystem_DragAndDrop _inputSystemDragAndDrop;
-    private AudioSource _audioSource;
-    private LevelManager _levelManager;
-    private CanvasGroup _canvasGroup;
+    [Inject] private InputSystem_DragAndDrop _inputSystemDragAndDrop;
+    [Inject] private LevelManager _levelManager;
+    //[Inject] private CanvasGroup _canvasGroup;
+    [Inject] private AudioSource _audioSource;
 
     [SerializeField]  private GameObject remainingItemCardSlot;
     [SerializeField] private Transform desiredParent;
@@ -45,14 +46,6 @@ public class UIManager : MonoBehaviour
     private bool _isPaused;
     private string _levelCount;
 
-    private void Awake()
-    {
-        _levelManager =FindObjectOfType<LevelManager>();
-        _inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
-        _audioSource = GetComponent<AudioSource>();
-        _canvasGroup = GetComponent<CanvasGroup>();
-        //UiITemCount();
-    }
     private void OnEnable()
     {
         _levelManager.RemainingTimeSendToUIAction += ReceivedRemainingTime;
@@ -61,8 +54,6 @@ public class UIManager : MonoBehaviour
         _levelManager.StarAchievedAction += OnstarAchieved;
 
         _inputSystemDragAndDrop.InstructionStatusAction += OnInstructionStatusCall;
-
-
     }
     private void OnDisable()
     {

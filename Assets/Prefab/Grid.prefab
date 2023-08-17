@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1703684175199144246}
   - component: {fileID: 2063917925547140767}
   - component: {fileID: 570392215212157856}
+  - component: {fileID: 1761088214980826969}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -32,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 8719890425313770429}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2063917925547140767
 MonoBehaviour:
@@ -46,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282a55d8b083b1a4eae65871799649d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MergeAudioClip: {fileID: 8300000, guid: c28bcb25b39c94d4aac54ba0f85db12c, type: 3}
   gridCellPrefab: {fileID: 3214872294680754750, guid: 590412b3917889647b2d23c67071e1af, type: 3}
   width: 7
+  _indexList: 
 --- !u!82 &570392215212157856
 AudioSource:
   m_ObjectHideFlags: 0
@@ -145,6 +146,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1761088214980826969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019464232104113948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1ff88cbda362484b94f0928ca984599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioClip: {fileID: 8300000, guid: c28bcb25b39c94d4aac54ba0f85db12c, type: 3}
 --- !u!1 &8719890425314256797
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6985523134472353924, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6985523134472353924, guid: acc28f1bb222c5946b6b8a4925e435fb, type: 3}
       propertyPath: shakeAmount

@@ -1,13 +1,13 @@
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 public class GridGenerator : MonoBehaviour
 {
-    public Action<List<Item>, string, Vector3> MergeAction;
-    private InputSystem_DragAndDrop _inputSystemDragAndDrop;
-    private IMergeAble iMergeAble;
+    [Inject] private InputSystem_DragAndDrop _inputSystemDragAndDrop;
+    [Inject] private IMergeAble iMergeAble;
+    [Inject] private DiContainer _container;
 
     [SerializeField] private GridCellScript gridCellPrefab;
     [SerializeField] private int width;
@@ -33,8 +33,6 @@ public class GridGenerator : MonoBehaviour
 
     void Awake()
     {
-        iMergeAble = GetComponent<IMergeAble>();
-        _inputSystemDragAndDrop = FindObjectOfType<InputSystem_DragAndDrop>();
         _gridCellObjectsList = new List<GridCellScript>(7);
         GenerateGrid();
         _itemDictionary = new Dictionary<string, ItemInformation>();
@@ -42,12 +40,12 @@ public class GridGenerator : MonoBehaviour
 
     private void OnEnable()
     {
-        _inputSystemDragAndDrop.ObjectDroppingOnCellAction += OnDroppingObjectToCEll;
+        _inputSystemDragAndDrop.ObjectDroppingOnCellAction += OnDroppingObjectToGridCell;
     }
 
     private void OnDisable()
     {
-        _inputSystemDragAndDrop.ObjectDroppingOnCellAction -= OnDroppingObjectToCEll;
+        _inputSystemDragAndDrop.ObjectDroppingOnCellAction -= OnDroppingObjectToGridCell;
     }
 
     private void Update()
@@ -61,7 +59,12 @@ public class GridGenerator : MonoBehaviour
         for (int x = 0; x < width; x++)
         {
             Vector3 worldPosition = new Vector3( (startX + x ) *( _cellSize + _spaceBetweenCell), 0,  gameObject.transform.position.z);
-            GridCellScript gridCellObject = Instantiate(gridCellPrefab, worldPosition, Quaternion.identity);
+            //GridCellScript gridCellObject = Instantiate(gridCellPrefab, worldPosition, Quaternion.identity);
+            var gridCellObject = _container.InstantiatePrefab(gridCellPrefab.gameObject).GetComponent<GridCellScript>();
+            var gridCellObjectTransform = gridCellObject.transform;
+            gridCellObjectTransform.position = worldPosition;
+            gridCellObjectTransform.rotation = Quaternion.identity;
+            
             if (gridCellObject != null)
             {
                 _gridCellObjectsList.Add(gridCellObject);
@@ -84,7 +87,7 @@ public class GridGenerator : MonoBehaviour
         return occupancyStatusList;
     }
 
-    void OnDroppingObjectToCEll(Item onCellItem)
+    void OnDroppingObjectToGridCell(Item onCellItem)
     {
         for (var i = 0; i < _inputSystemDragAndDrop.GridCellStatusList.Count; i++)
         {
@@ -117,7 +120,6 @@ public class GridGenerator : MonoBehaviour
             if (HasThreeSameObject(itemName))
             {
                 //send the list
-                //MergeAction?.Invoke(_itemDictionary[itemName].FruitScriptObjects,itemName, _middleObjectPosition);
                 _currentItem = itemName;
                 Invoke(nameof(FoundThreeSamePostProcess),0.1f);
                 
@@ -170,23 +172,6 @@ public class GridGenerator : MonoBehaviour
             }
         }
         return Vector3.zero;
-    }
-
-    //for debug purpose
-    void PrintDictionary()
-    {
-        foreach (var keyValue in _itemDictionary)
-        {
-            var name = keyValue.Key;
-            var count = keyValue.Value.Count;
-            var gameObjects = keyValue.Value.FruitScriptObjects;
-            
-            //Debug.Log("Object Name: " + name + " Count: "+ count);
-            foreach (var listItem in gameObjects)
-            {
-                Debug.Log("listItem:" + listItem);
-            }
-        }
     }
 }
 

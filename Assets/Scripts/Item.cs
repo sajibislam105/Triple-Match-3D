@@ -1,17 +1,13 @@
 using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 public class Item : MonoBehaviour
 {
-    private InputSystem_DragAndDrop _scalingDown;
+    [Inject] private InputSystem_DragAndDrop _scalingDown;
     [SerializeField] public string fruitName;
     
     public bool _isInGrid;
-
-    private void Awake()
-    {
-        _scalingDown = FindObjectOfType<InputSystem_DragAndDrop>();
-    }
 
     private void OnEnable()
     {

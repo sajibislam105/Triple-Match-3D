@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 public class InputSystem_DragAndDrop : MonoBehaviour
 {
-    private Camera _camera;
-    private AudioSource _audioSource;
-    private RemainingItemManager _remainingItemManager;
+    [Inject] private Camera _camera;
+    [Inject] private GridGenerator _gridGenerator;
+    [Inject] private RemainingItemManager _remainingItemManager;
+    [Inject] private AudioSource _audioSource;
     [SerializeField] private AudioClip objectDragAudioClip;
-    
-    private GridGenerator _gridGenerator;
 
     public Action<Transform> ScaleDownObjectAction;
     public Action<Item> ObjectDroppingOnCellAction;
@@ -24,13 +24,6 @@ public class InputSystem_DragAndDrop : MonoBehaviour
     [SerializeField] private List<bool> gridCellStatusList = new List<bool>();
     public List<bool> GridCellStatusList => gridCellStatusList;
 
-    private void Awake()
-    {
-        _camera = Camera.main;
-        _gridGenerator = FindObjectOfType<GridGenerator>();
-        _remainingItemManager = FindObjectOfType<RemainingItemManager>();
-        _audioSource = GetComponent<AudioSource>();
-    }
     void Update()
     {
         DragAndDrop();

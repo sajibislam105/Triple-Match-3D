@@ -1,16 +1,16 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 public class MainMenu : MonoBehaviour
 {
-    private AudioSource _audioSource;
+    [Inject] private AudioSource _audioSource;
     
     [SerializeField] private TextMeshProUGUI LevelNumber;
 
     private void Start()
     {
-        _audioSource = GetComponent<AudioSource>();
         if (PlayerPrefs.HasKey("Level"))
         {
             LevelNumber.text = PlayerPrefs.GetInt("Level").ToString();

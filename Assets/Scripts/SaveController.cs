@@ -1,16 +1,11 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 public class SaveController : MonoBehaviour
 {
-    private LevelManager _levelManager;
-
-    private void Awake()
-    {
-        _levelManager = FindObjectOfType<LevelManager>();
-    }
-
+    [Inject ]private LevelManager _levelManager;
+    
     private void OnEnable()
     {
         _levelManager.SaveLevelAction += OnSaveAction;

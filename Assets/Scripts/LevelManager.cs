@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 public class LevelManager : MonoBehaviour
 {
-    private UIManager _uiManager;
+    [Inject] private UIManager _uiManager;
 
     public Action LevelCompleteAction;
     public Action LevelFailedAction;
@@ -18,11 +19,6 @@ public class LevelManager : MonoBehaviour
     
     private bool _isLevelCompleted;
     private bool _isGamePaused;
-
-    private void Awake()
-    {
-        _uiManager = FindObjectOfType<UIManager>();
-    }
 
     void Start()
     {

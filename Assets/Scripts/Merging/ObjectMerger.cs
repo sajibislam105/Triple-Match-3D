@@ -1,30 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Zenject;
 
 public  class ObjectMerger : MonoBehaviour, IMergeAble
 {
-    private AudioSource _audioSource;
-    private ParticleSystem _mergeParticleSystem;
-    private GridGenerator _gridGenerator;
-    [SerializeField] private AudioClip _audioClip;
+    [Inject] private GridGenerator _gridGenerator;
+    [Inject] private AudioSource _audioSource;
+    [Inject] private ParticleSystem _mergeParticleSystem;
     
-    void Awake()
-    {
-        _gridGenerator = GetComponent<GridGenerator>();
-        _audioSource = GetComponent<AudioSource>();
-        _mergeParticleSystem = GetComponentInChildren<ParticleSystem>();
-    }
-
-    private void OnEnable()
-    {
-        _gridGenerator.MergeAction += Merge;
-    }
-
-    private void OnDisable()
-    {
-        _gridGenerator.MergeAction -= Merge;
-    }
+    [SerializeField] private AudioClip _audioClip;
 
     public void Merge(List<Item> itemList, string receivedName, Vector3 mergePosition)
     {
@@ -39,7 +24,7 @@ public  class ObjectMerger : MonoBehaviour, IMergeAble
                 //Debug.Log("Contains Key. " + "Received Name: " + ReceivedName);
                 if (itemList.Count >= 3 && mergePosition != Vector3.zero)
                 {
-                    Debug.Log("Merging start");
+                    //Debug.Log("Merging start");
                     //Debug.Log("Count = 3");
                     item.transform.DOMoveX(mergePosition.x, 0.75f).SetEase(Ease.InExpo).OnComplete((() =>
                     {
