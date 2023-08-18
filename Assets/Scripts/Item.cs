@@ -4,24 +4,33 @@ using Zenject;
 
 public class Item : MonoBehaviour
 {
-    [Inject] private InputSystem_DragAndDrop _scalingDown;
     [SerializeField] public string fruitName;
     
-    public bool _isInGrid;
+    [Inject] private InputSystem_DragAndDrop _scalingDown;
+    [Inject] private SignalBus _signalBus;
+
+    private bool _isInGrid;
+
+    public bool IsInGrid
+    {
+        get { return _isInGrid; }
+        //set { _isInGrid = value; }
+    }
 
     private void OnEnable()
     {
-        _scalingDown.ScaleDownObjectAction += OnScaleDowned;
+        
+        _signalBus.Subscribe<TripleMatchSignals.ScaleDownObjectSignal>(OnScaleDowned);
     }
 
     private void OnDisable()
     {
-        _scalingDown.ScaleDownObjectAction -= OnScaleDowned;
+        _signalBus.Unsubscribe<TripleMatchSignals.ScaleDownObjectSignal>(OnScaleDowned);
     }
 
-    void OnScaleDowned(Transform clickedObject)
+    void OnScaleDowned(TripleMatchSignals.ScaleDownObjectSignal clickedObjectSignal)
     {
-        if (clickedObject == transform)
+        if (clickedObjectSignal.ToDrag == transform)
         {
             transform.DOScale(0.5f, 0.1f).SetEase(Ease.Linear);
         }

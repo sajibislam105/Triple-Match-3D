@@ -5,11 +5,11 @@ using Zenject;
 
 public  class ObjectMerger : MonoBehaviour, IMergeAble
 {
+    [SerializeField] private AudioClip _audioClip;
+    
     [Inject] private GridGenerator _gridGenerator;
     [Inject] private AudioSource _audioSource;
     [Inject] private ParticleSystem _mergeParticleSystem;
-    
-    [SerializeField] private AudioClip _audioClip;
 
     public void Merge(List<Item> itemList, string receivedName, Vector3 mergePosition)
     {

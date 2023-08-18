@@ -4,8 +4,9 @@ using Zenject;
 
 public class Card : MonoBehaviour
 {
-    [Inject] private RectTransform _rectTransform;
     [SerializeField] private TextMeshProUGUI remainingItemCountText,remainingItemNameText;
+    
+    [Inject] private RectTransform _rectTransform;
 
     public TextMeshProUGUI itemName
     {

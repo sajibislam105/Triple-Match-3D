@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -9,22 +8,13 @@ using Zenject;
 
 public class UIManager : MonoBehaviour
 {
-    [Inject] private InputSystem_DragAndDrop _inputSystemDragAndDrop;
-    [Inject] private LevelManager _levelManager;
-    //[Inject] private CanvasGroup _canvasGroup;
-    [Inject] private AudioSource _audioSource;
-
     [SerializeField]  private GameObject remainingItemCardSlot;
     [SerializeField] private Transform desiredParent;
-    
-    public Action RestartUIButtonClickedAction;
-    public Action PlayNextUIButtonClickedAction;
-    public Action<bool> GamePausedAction;
-    
+
     [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private TextMeshProUGUI TimerText;
     [SerializeField] private Button backButton;
-    
+
     [SerializeField] private Button backToPlay;
     [SerializeField] private Button landingPage;
     [SerializeField] private Button close;
@@ -41,28 +31,32 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI instruction;
     
+    [Inject] private InputSystem_DragAndDrop _inputSystemDragAndDrop;
+    [Inject] private AudioSource _audioSource;
+    [Inject] private SignalBus _signalBus;
+
     Dictionary<string, ItemDataForUI> AllItemData = new Dictionary<string, ItemDataForUI>();
-    
+
     private bool _isPaused;
     private string _levelCount;
 
     private void OnEnable()
     {
-        _levelManager.RemainingTimeSendToUIAction += ReceivedRemainingTime;
-        _levelManager.LevelCompleteAction += onLevelComplete;
-        _levelManager.LevelFailedAction += onLevelFailed;
-        _levelManager.StarAchievedAction += OnstarAchieved;
-
-        _inputSystemDragAndDrop.InstructionStatusAction += OnInstructionStatusCall;
+        _signalBus.Subscribe<TripleMatchSignals.RemainingTimeSendToUISignal>(ReceivedRemainingTime);
+        _signalBus.Subscribe<TripleMatchSignals.LevelCompleteSignal>(onLevelComplete);
+        _signalBus.Subscribe<TripleMatchSignals.LevelFailedSignal>(onLevelFailed);
+        _signalBus.Subscribe<TripleMatchSignals.StarAchievedSignal>(OnstarAchieved);
+        
+        _signalBus.Subscribe<TripleMatchSignals.InstructionStatusSignal>(OnInstructionStatusCall);
     }
     private void OnDisable()
     {
-        _levelManager.RemainingTimeSendToUIAction -= ReceivedRemainingTime;
-        _levelManager.LevelCompleteAction -= onLevelComplete;
-        _levelManager.LevelFailedAction -= onLevelFailed;
-        _levelManager.StarAchievedAction -= OnstarAchieved;
+        _signalBus.Unsubscribe<TripleMatchSignals.RemainingTimeSendToUISignal>(ReceivedRemainingTime);
+        _signalBus.Unsubscribe<TripleMatchSignals.LevelCompleteSignal>(onLevelComplete);
+        _signalBus.Unsubscribe<TripleMatchSignals.LevelFailedSignal>(onLevelFailed);
+        _signalBus.Unsubscribe<TripleMatchSignals.StarAchievedSignal>(OnstarAchieved);
         
-        _inputSystemDragAndDrop.InstructionStatusAction -= OnInstructionStatusCall;
+        _signalBus.Unsubscribe<TripleMatchSignals.InstructionStatusSignal>(OnInstructionStatusCall);
     }
 
     private void Start()
@@ -93,12 +87,12 @@ public class UIManager : MonoBehaviour
         backButton.enabled = false;
     }
 
-    private void ReceivedRemainingTime(float received_time)
+    private void ReceivedRemainingTime(TripleMatchSignals.RemainingTimeSendToUISignal received_time)
     {
-        int minutes = Mathf.FloorToInt(received_time / 60f);
-        int seconds = Mathf.FloorToInt(received_time % 60f);
+        int minutes = Mathf.FloorToInt(received_time.CurrentTime / 60f);
+        int seconds = Mathf.FloorToInt(received_time.CurrentTime % 60f);
         
-        if (received_time < 10f )
+        if (received_time.CurrentTime < 10f )
         {
             TimerText.color = Color.red;
         }
@@ -110,13 +104,13 @@ public class UIManager : MonoBehaviour
     {
         _audioSource.Play();
         //invoke next level
-        PlayNextUIButtonClickedAction?.Invoke();
+        _signalBus.Fire(new TripleMatchSignals.PlayNextUIButtonClickedSignal());
     }
     public void onRestartButtonClicked()
     {
         _audioSource.Play();
         //invoke restart
-        RestartUIButtonClickedAction?.Invoke();
+        _signalBus.Fire(new TripleMatchSignals.RestartUIButtonClickedSignal());
     }
 
     public void onBackButtonClicked()
@@ -127,7 +121,10 @@ public class UIManager : MonoBehaviour
         TimerText.enabled = false;
         //invoke pause
         _isPaused = true;
-        GamePausedAction?.Invoke(_isPaused);
+        _signalBus.Fire(new TripleMatchSignals.GamePausedSignal()
+        {
+            IsPaused = _isPaused
+        });
         pauseMenu.SetActive(true);
     }
 
@@ -139,7 +136,10 @@ public class UIManager : MonoBehaviour
         TimerText.enabled = true;
         //invoke pause
         _isPaused = false;
-        GamePausedAction?.Invoke(_isPaused);
+        _signalBus.Fire(new TripleMatchSignals.GamePausedSignal()
+        {
+            IsPaused = _isPaused
+        });
         pauseMenu.SetActive(false);
     }
 
@@ -157,12 +157,16 @@ public class UIManager : MonoBehaviour
         TimerText.enabled = true;
         //invoke pause
         _isPaused = false;
-        GamePausedAction?.Invoke(_isPaused);
+        _signalBus.Fire(new TripleMatchSignals.GamePausedSignal()
+        {
+            IsPaused = _isPaused
+        });
         pauseMenu.SetActive(false);
     }
 
-    private void OnstarAchieved(float percentageRemaining)
+    private void OnstarAchieved(TripleMatchSignals.StarAchievedSignal starAchievedSignal)
     {
+        var percentageRemaining = starAchievedSignal.PercentRemaining;
         if (percentageRemaining > 50f)
         {
             //Debug.Log("3 star");

@@ -2,8 +2,19 @@ using UnityEngine;
 
 public class GridCellScript : MonoBehaviour
 {
-    public bool _isOccupied;
-    public Item occupiedObject; // cause I need the fruit script mono behaviour not the whole game object
+    private bool _isOccupied;
+    private Item occupiedObject; // cause I need the fruit script mono behaviour not the whole game object
+
+    public Item OccupiedObject
+    {
+        get { return occupiedObject; }
+        private set { occupiedObject = value; }
+    }
+    public bool IsOccupied
+    {
+        get { return _isOccupied; }
+        private set { _isOccupied = value; }
+    }
 
     private void OnTriggerEnter(Collider other)
     {

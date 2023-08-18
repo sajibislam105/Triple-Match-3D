@@ -5,9 +5,9 @@ using Zenject;
 
 public class MainMenu : MonoBehaviour
 {
-    [Inject] private AudioSource _audioSource;
-    
     [SerializeField] private TextMeshProUGUI LevelNumber;
+    
+    [Inject] private AudioSource _audioSource;
 
     private void Start()
     {

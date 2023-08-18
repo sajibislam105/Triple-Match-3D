@@ -12,7 +12,6 @@ public class RemainingItemManager : MonoBehaviour
     {
         UiITemCount();
     }
-
     void UiITemCount()
     {
         // Finding all game objects with the "Item" tag

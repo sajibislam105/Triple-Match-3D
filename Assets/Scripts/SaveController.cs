@@ -4,19 +4,17 @@ using Zenject;
 
 public class SaveController : MonoBehaviour
 {
-    [Inject ]private LevelManager _levelManager;
-    
+    [Inject] private SignalBus _signalBus;
     private void OnEnable()
     {
-        _levelManager.SaveLevelAction += OnSaveAction;
+        _signalBus.Subscribe<TripleMatchSignals.SaveLevelSignal>(OnSaveSignal);
     }
-
     private void OnDisable()
     {
-        _levelManager.SaveLevelAction -= OnSaveAction;
+        _signalBus.Unsubscribe<TripleMatchSignals.SaveLevelSignal>(OnSaveSignal);
     }
 
-    void OnSaveAction()
+    void OnSaveSignal()
     {
         string activeLevel =  "Level"/*SceneManager.GetActiveScene().name*/;
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;

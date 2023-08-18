@@ -1,22 +1,14 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
 public class LevelManager : MonoBehaviour
 {
-    [Inject] private UIManager _uiManager;
-
-    public Action LevelCompleteAction;
-    public Action LevelFailedAction;
-    public Action<float> RemainingTimeSendToUIAction;
-    public Action<float> StarAchievedAction;
-    public Action SaveLevelAction;
+    [Inject] private SignalBus _signalBus;
 
     [SerializeField] private float _totalTime = 60.0f; //in seconds
     private float _currentTime;
     private float _totalTimeTakenToCompleteLevel;
-    
     private bool _isLevelCompleted;
     private bool _isGamePaused;
 
@@ -24,19 +16,19 @@ public class LevelManager : MonoBehaviour
     {
         _currentTime = _totalTime; // so that it gets reset every time level start again.
     }
-    
+
     private void OnEnable()
     {
-        _uiManager.PlayNextUIButtonClickedAction += NextLevel;
-        _uiManager.RestartUIButtonClickedAction += RestartLevel;
-        _uiManager.GamePausedAction += PauseStatus;
+        _signalBus.Subscribe<TripleMatchSignals.PlayNextUIButtonClickedSignal>(NextLevel);
+        _signalBus.Subscribe<TripleMatchSignals.RestartUIButtonClickedSignal>(RestartLevel);
+        _signalBus.Subscribe<TripleMatchSignals.GamePausedSignal>(PauseStatus);
     }
 
     private void OnDisable()
     {
-        _uiManager.PlayNextUIButtonClickedAction -= NextLevel;
-        _uiManager.RestartUIButtonClickedAction -= RestartLevel;
-        _uiManager.GamePausedAction -= PauseStatus;
+        _signalBus.Unsubscribe<TripleMatchSignals.PlayNextUIButtonClickedSignal>(NextLevel);
+        _signalBus.Unsubscribe<TripleMatchSignals.RestartUIButtonClickedSignal>(RestartLevel);
+        _signalBus.Unsubscribe<TripleMatchSignals.GamePausedSignal>(PauseStatus);
     }
     
     void Update()
@@ -44,17 +36,22 @@ public class LevelManager : MonoBehaviour
         if (GameObject.FindGameObjectWithTag("Item") == null && !_isLevelCompleted)
         {
             //Invoke Level Complete UI
-            LevelCompleteAction?.Invoke();
+            _signalBus.Fire(new TripleMatchSignals.LevelCompleteSignal());
+            
             _isLevelCompleted = true;
             if (_isLevelCompleted)
-            {   SaveLevelAction?.Invoke();
+            {
+                _signalBus.Fire(new TripleMatchSignals.SaveLevelSignal());
                 _totalTimeTakenToCompleteLevel = _totalTime - _currentTime;
                 //Debug.Log("Total time taken to complete the level: " + _totalTimeTakenToCompleteLevel
                 float remainingTime = _totalTime - _totalTimeTakenToCompleteLevel;
                 float percentRemaining = (remainingTime / _totalTime) * 100;
                 
                 //invoke star sequence
-                StarAchievedAction?.Invoke(percentRemaining);
+                _signalBus.Fire(new TripleMatchSignals.StarAchievedSignal()
+                {
+                    PercentRemaining =  percentRemaining
+                });
             }
         }
 
@@ -69,14 +66,17 @@ public class LevelManager : MonoBehaviour
         if (_currentTime >= 0)
         {
             _currentTime -= Time.deltaTime;
-            RemainingTimeSendToUIAction?.Invoke(_currentTime);
+            _signalBus.Fire(new TripleMatchSignals.RemainingTimeSendToUISignal()
+            {
+                CurrentTime = _currentTime
+            });
         }
         else
         {
             if (!_isLevelCompleted)
             {
                //invoke on level failed
-               LevelFailedAction?.Invoke();
+               _signalBus.Fire(new TripleMatchSignals.LevelFailedSignal());
             }
         }
     }
@@ -101,9 +101,9 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(currentSceneIndex);
     }
 
-    private void PauseStatus(bool pauseStatus)
+    private void PauseStatus(TripleMatchSignals.GamePausedSignal pauseStatus)
     {
-        _isGamePaused = pauseStatus;
+        _isGamePaused = pauseStatus.IsPaused;
     }
     
 }

@@ -5,20 +5,20 @@ using Zenject;
 
 public class GridGenerator : MonoBehaviour
 {
+    [SerializeField] private GridCellScript gridCellPrefab;
+    [SerializeField] private int width;
+    [SerializeField]private List<int> _indexList;
+    
     [Inject] private InputSystem_DragAndDrop _inputSystemDragAndDrop;
     [Inject] private IMergeAble iMergeAble;
     [Inject] private DiContainer _container;
-
-    [SerializeField] private GridCellScript gridCellPrefab;
-    [SerializeField] private int width;
-    private Vector3 middlePosition;
-    
-    private float _cellSize = 1f;
-    private float _spaceBetweenCell = 0.1f;
+    [Inject] private SignalBus _signalBus;
 
     private Dictionary<string, ItemInformation> _itemDictionary;
     private List<GridCellScript> _gridCellObjectsList;
-    [SerializeField]private List<int> _indexList;
+    private float _cellSize = 1f;
+    private float _spaceBetweenCell = 0.1f;
+    private Vector3 _middlePosition;
     private Vector3 _middleObjectPosition;
     private string _currentItem;
 
@@ -40,12 +40,14 @@ public class GridGenerator : MonoBehaviour
 
     private void OnEnable()
     {
-        _inputSystemDragAndDrop.ObjectDroppingOnCellAction += OnDroppingObjectToGridCell;
+       // _inputSystemDragAndDrop.ObjectDroppingOnCellAction += OnDroppingObjectToGridCell;
+        _signalBus.Subscribe<TripleMatchSignals.ObjectDroppingOnCellSignal>(OnDroppingObjectToGridCell);
     }
 
     private void OnDisable()
     {
-        _inputSystemDragAndDrop.ObjectDroppingOnCellAction -= OnDroppingObjectToGridCell;
+        //_inputSystemDragAndDrop.ObjectDroppingOnCellAction -= OnDroppingObjectToGridCell;
+        _signalBus.Unsubscribe<TripleMatchSignals.ObjectDroppingOnCellSignal>(OnDroppingObjectToGridCell);
     }
 
     private void Update()
@@ -82,12 +84,12 @@ public class GridGenerator : MonoBehaviour
         List<bool> occupancyStatusList = new List<bool>(10);
         foreach (GridCellScript gridCellGameObject in _gridCellObjectsList)
         {
-           occupancyStatusList.Add(gridCellGameObject._isOccupied);
+           occupancyStatusList.Add(gridCellGameObject.IsOccupied);
         }
         return occupancyStatusList;
     }
 
-    void OnDroppingObjectToGridCell(Item onCellItem)
+    void OnDroppingObjectToGridCell(TripleMatchSignals.ObjectDroppingOnCellSignal signal)
     {
         for (var i = 0; i < _inputSystemDragAndDrop.GridCellStatusList.Count; i++)
         {
@@ -95,9 +97,9 @@ public class GridGenerator : MonoBehaviour
             //Debug.Log($"grid cell status of {i} is {gridCellStatus}");
         }
         int containedObject = 0;
-        if (onCellItem != null && containedObject <= 7)
+        if (signal.ToDragItem != null && containedObject <= 7)
         {
-            string itemName = onCellItem.fruitName;
+            string itemName = signal.ToDragItem.fruitName;
             //Debug.Log("Fruit Name: " + itemName);
             if (!_itemDictionary.ContainsKey(itemName))
             {
@@ -105,7 +107,7 @@ public class GridGenerator : MonoBehaviour
                 containedObject ++;
                 ItemInformation itemInformation = new ItemInformation();
                 itemInformation.Count = 1;
-                itemInformation.FruitScriptObjects.Add(onCellItem);
+                itemInformation.FruitScriptObjects.Add(signal.ToDragItem);
                 _itemDictionary.Add(itemName,itemInformation);
             }
             else
@@ -113,7 +115,7 @@ public class GridGenerator : MonoBehaviour
                 containedObject ++;
                 _itemDictionary[itemName].Count++;
                 //Debug.Log("Found " + itemName + " in game object list, fruit count: " + _itemDictionary[itemName].Count);
-                _itemDictionary[itemName].FruitScriptObjects.Add(onCellItem);
+                _itemDictionary[itemName].FruitScriptObjects.Add(signal.ToDragItem);
             }
             
             //Till here occupancy status updated. Now Update Index List of occupied cells
@@ -129,7 +131,7 @@ public class GridGenerator : MonoBehaviour
         {
             //Debug.Log("More than 7 object. No FruitScript found.");
         }
-        _middleObjectPosition = GetMiddleObject(onCellItem.fruitName);
+        _middleObjectPosition = GetMiddleObject(signal.ToDragItem.fruitName);
     }
     private void FoundThreeSamePostProcess()
     {
@@ -152,7 +154,7 @@ public class GridGenerator : MonoBehaviour
         _indexList = new List<int>();
         for (int i = 0; i < 7; i++) //grid list count 7
         {
-            if (_gridCellObjectsList[i]._isOccupied &&  (_gridCellObjectsList[i].occupiedObject.fruitName == itemName))
+            if (_gridCellObjectsList[i].IsOccupied &&  (_gridCellObjectsList[i].OccupiedObject.fruitName == itemName))
             {
                 //Debug.Log("Occupied at index: " + i );
                 _indexList.Add(i);

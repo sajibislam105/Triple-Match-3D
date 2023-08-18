@@ -6,22 +6,20 @@ using Zenject;
 
 public class InputSystem_DragAndDrop : MonoBehaviour
 {
+    [SerializeField] private AudioClip objectDragAudioClip;
+    [SerializeField] private List<bool> gridCellStatusList = new List<bool>();
+
     [Inject] private Camera _camera;
     [Inject] private GridGenerator _gridGenerator;
     [Inject] private RemainingItemManager _remainingItemManager;
     [Inject] private AudioSource _audioSource;
-    [SerializeField] private AudioClip objectDragAudioClip;
-
-    public Action<Transform> ScaleDownObjectAction;
-    public Action<Item> ObjectDroppingOnCellAction;
-    public Action InstructionStatusAction;
+    [Inject] private SignalBus _signalBus;
 
     private bool _isDragging;
     private Transform _toDrag;
     private Vector3 _newGridPosition;
     private Vector3 _oldPositionOfItem;
     
-    [SerializeField] private List<bool> gridCellStatusList = new List<bool>();
     public List<bool> GridCellStatusList => gridCellStatusList;
 
     void Update()
@@ -35,10 +33,11 @@ public class InputSystem_DragAndDrop : MonoBehaviour
         Vector3 v3;
         if (Input.GetMouseButtonDown(0))
         {
-            InstructionStatusAction?.Invoke(); // turning of the instruction
+            //InstructionStatusAction?.Invoke(); // turning of the instruction
+            _signalBus.Fire(new TripleMatchSignals.InstructionStatusSignal()); // turning of the instruction
             
             RaycastHit? hitObject = CastRay();
-            if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<Item>()._isInGrid)
+            if (hitObject.HasValue && hitObject.Value.collider.CompareTag("Item") && !hitObject.Value.transform.GetComponent<Item>().IsInGrid)
             {
                 _toDrag = hitObject.Value.transform;
                 //float distance = hitObject.Value.transform.position.z - _camera.transform.position.z;
@@ -75,7 +74,11 @@ public class InputSystem_DragAndDrop : MonoBehaviour
             {
                 _newGridPosition = _oldPositionOfItem; // if collider does not hit any grid then back to Old Grid
             }
-            ScaleDownObjectAction?.Invoke(_toDrag);
+            _signalBus.Fire(new TripleMatchSignals.ScaleDownObjectSignal()
+            {
+                ToDrag = _toDrag
+            });
+            
         }
 
         if (Input.GetMouseButton(0) == false && _isDragging)
@@ -99,8 +102,12 @@ public class InputSystem_DragAndDrop : MonoBehaviour
                             
                             Item toDragItem = _toDrag.GetComponent<Item>();
                             toDragItem.PlacedInGrid();
-                            //invoke an action to add to the dictionary.
-                            ObjectDroppingOnCellAction?.Invoke(toDragItem);
+                            
+                            //invoke an signal/action to add to the dictionary.
+                            _signalBus.Fire(new TripleMatchSignals.ObjectDroppingOnCellSignal()
+                            {
+                                ToDragItem = toDragItem
+                            });
                             
                             _audioSource.PlayOneShot(objectDragAudioClip);
                             
